@@ -252,6 +252,23 @@ cargo build --release --no-default-features
 cargo test
 ```
 
+## Uninstall
+
+```bash
+# Remove the binary
+rm ~/.local/bin/codegraph-mcp
+
+# Remove project data (run inside each project you initialized)
+rm -rf .codegraph/
+codegraph-mcp git-hooks uninstall   # if you installed git hooks
+
+# Remove Claude Code integration files (optional, check before deleting)
+rm .mcp.json
+rm -rf .claude/
+```
+
+If you installed to a custom directory via `CODEGRAPH_INSTALL`, remove the binary from there instead.
+
 ## Design Decisions
 
 - **Sync core, async only at the MCP boundary.** tree-sitter and rusqlite are synchronous. Tokio is used only for the rmcp stdio transport.
