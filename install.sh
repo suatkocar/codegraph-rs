@@ -8,7 +8,7 @@
 #   CODEGRAPH_VERSION   — Version tag to install (default: latest)
 #   CODEGRAPH_INSTALL   — Install directory (default: ~/.local/bin)
 
-set -euo pipefail
+set -eo pipefail
 
 REPO="suatkocar/codegraph-rs"
 BINARY="codegraph-mcp"
