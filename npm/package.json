@@ -1,6 +1,6 @@
 {
   "name": "@suatkocar/codegraph",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Codebase intelligence as an MCP server — semantic code graph with 15 languages, 13 tools, and 68% token reduction",
   "author": "Suat Kocar",
   "license": "MIT",
