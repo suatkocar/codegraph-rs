@@ -5,11 +5,11 @@
 
 use std::path::PathBuf;
 
-use codegraph_mcp::db::schema::initialize_database;
-use codegraph_mcp::eval::harness::{load_ground_truth, run_evaluation};
-use codegraph_mcp::eval::token_benchmark::{format_benchmark_table, run_benchmarks};
-use codegraph_mcp::graph::store::GraphStore;
-use codegraph_mcp::indexer::pipeline::{IndexOptions, IndexingPipeline};
+use codegraph::db::schema::initialize_database;
+use codegraph::eval::harness::{load_ground_truth, run_evaluation};
+use codegraph::eval::token_benchmark::{format_benchmark_table, run_benchmarks};
+use codegraph::graph::store::GraphStore;
+use codegraph::indexer::pipeline::{IndexOptions, IndexingPipeline};
 
 /// Helper: index the eval-project fixture into an in-memory store.
 fn setup_indexed_store() -> GraphStore {

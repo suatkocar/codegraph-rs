@@ -11,7 +11,7 @@
 set -eo pipefail
 
 REPO="suatkocar/codegraph"
-BINARY="codegraph-mcp"
+BINARY="codegraph"
 INSTALL_DIR="${CODEGRAPH_INSTALL:-$HOME/.local/bin}"
 
 # ---------------------------------------------------------------------------
@@ -116,7 +116,7 @@ main() {
   echo ""
   echo "  Get started:"
   echo "    cd your-project"
-  echo "    codegraph-mcp init ."
+  echo "    codegraph init ."
   echo ""
   echo "  That's it. Open Claude Code and your codebase is graph-aware."
   echo ""

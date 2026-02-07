@@ -30,7 +30,7 @@ cargo install --git https://github.com/suatkocar/codegraph
 
 ```bash
 # One command sets up everything
-codegraph-mcp init .
+codegraph init .
 ```
 
 That's it. This single command:
@@ -139,7 +139,7 @@ CodeGraph exposes 13 tools through MCP. Any compatible client (Claude Code, Clau
 ### Example: Find what breaks if you change a file
 
 ```bash
-codegraph-mcp impact src/auth/middleware.ts
+codegraph impact src/auth/middleware.ts
 ```
 
 ```
@@ -157,7 +157,7 @@ Impact Analysis: src/auth/middleware.ts
 ### Example: Get LLM-optimized context for a task
 
 ```bash
-codegraph-mcp query "authentication flow"
+codegraph query "authentication flow"
 ```
 
 Returns ranked results combining keyword relevance (BM25) with semantic similarity (768-dim code-specific embeddings), fused via Reciprocal Rank Fusion.
@@ -221,20 +221,20 @@ src/
 ## CLI Reference
 
 ```
-codegraph-mcp init <dir>              Full interactive setup (banner, prompts, progress bars)
-codegraph-mcp init <dir> --yes        Non-interactive setup (CI/scripting)
-codegraph-mcp index <dir>             Index a codebase (incremental by default)
-codegraph-mcp index <dir> --force     Force full re-index
-codegraph-mcp serve                   Start MCP server (stdio transport)
-codegraph-mcp query <text>            Search the code graph
-codegraph-mcp impact <target>         Blast radius analysis
-codegraph-mcp stats                   Show index statistics
-codegraph-mcp dead-code               Find potentially unused symbols
-codegraph-mcp frameworks <dir>        Detect frameworks and libraries
-codegraph-mcp languages               Language breakdown
-codegraph-mcp install-hooks <dir>     Install Claude Code hooks
-codegraph-mcp git-hooks install       Install git post-commit hook
-codegraph-mcp git-hooks uninstall     Remove git post-commit hook
+codegraph init <dir>              Full interactive setup (banner, prompts, progress bars)
+codegraph init <dir> --yes        Non-interactive setup (CI/scripting)
+codegraph index <dir>             Index a codebase (incremental by default)
+codegraph index <dir> --force     Force full re-index
+codegraph serve                   Start MCP server (stdio transport)
+codegraph query <text>            Search the code graph
+codegraph impact <target>         Blast radius analysis
+codegraph stats                   Show index statistics
+codegraph dead-code               Find potentially unused symbols
+codegraph frameworks <dir>        Detect frameworks and libraries
+codegraph languages               Language breakdown
+codegraph install-hooks <dir>     Install Claude Code hooks
+codegraph git-hooks install       Install git post-commit hook
+codegraph git-hooks uninstall     Remove git post-commit hook
 ```
 
 ## How It Works
@@ -313,11 +313,11 @@ cargo test
 
 ```bash
 # Remove the binary
-rm ~/.local/bin/codegraph-mcp
+rm ~/.local/bin/codegraph
 
 # Remove project data (run inside each project you initialized)
 rm -rf .codegraph/
-codegraph-mcp git-hooks uninstall   # if you installed git hooks
+codegraph git-hooks uninstall   # if you installed git hooks
 
 # Remove Claude Code integration files (optional, check before deleting)
 rm .mcp.json

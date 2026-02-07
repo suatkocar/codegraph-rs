@@ -1,4 +1,4 @@
-//! Interactive installer for CodeGraph — beautiful UX for `codegraph-mcp init`.
+//! Interactive installer for CodeGraph — beautiful UX for `codegraph init`.
 
 use console::style;
 use dialoguer::Confirm;

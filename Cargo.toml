@@ -1,6 +1,6 @@
 [package]
-name = "codegraph-mcp"
-version = "0.1.0"
+name = "codegraph"
+version = "0.1.1"
 edition = "2021"
 authors = ["Suat Kocar"]
 description = "Codebase intelligence MCP server — semantic code graph with vector search"
@@ -10,7 +10,7 @@ keywords = ["mcp", "claude", "code-intelligence", "tree-sitter", "semantic-searc
 categories = ["development-tools", "command-line-utilities"]
 
 [[bin]]
-name = "codegraph-mcp"
+name = "codegraph"
 path = "src/main.rs"
 
 [dependencies]

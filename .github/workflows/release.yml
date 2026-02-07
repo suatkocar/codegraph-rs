@@ -10,7 +10,7 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
-  BINARY_NAME: codegraph-mcp
+  BINARY_NAME: codegraph
 
 jobs:
   build:

@@ -1,9 +1,9 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::path::PathBuf;
 
-use codegraph_mcp::db::schema::initialize_database;
-use codegraph_mcp::graph::store::GraphStore;
-use codegraph_mcp::indexer::pipeline::{IndexOptions, IndexingPipeline};
+use codegraph::db::schema::initialize_database;
+use codegraph::graph::store::GraphStore;
+use codegraph::indexer::pipeline::{IndexOptions, IndexingPipeline};
 
 fn bench_index_eval_project(c: &mut Criterion) {
     let fixture_path = PathBuf::from("tests/fixtures/eval-project");

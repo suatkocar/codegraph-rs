@@ -1,0 +1,38 @@
+{
+  "name": "@suatkocar/codegraph",
+  "version": "0.1.1",
+  "description": "Codebase intelligence as an MCP server — semantic code graph with 15 languages, 13 tools, and 68% token reduction",
+  "author": "Suat Kocar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suatkocar/codegraph"
+  },
+  "homepage": "https://github.com/suatkocar/codegraph#readme",
+  "keywords": [
+    "mcp",
+    "claude",
+    "code-intelligence",
+    "tree-sitter",
+    "semantic-search",
+    "code-graph",
+    "codebase",
+    "ai-tools"
+  ],
+  "bin": {
+    "codegraph": "bin/codegraph"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "os": ["darwin", "linux"],
+  "cpu": ["x64", "arm64"],
+  "engines": {
+    "node": ">=16"
+  },
+  "files": [
+    "bin/",
+    "install.js",
+    "README.md"
+  ]
+}

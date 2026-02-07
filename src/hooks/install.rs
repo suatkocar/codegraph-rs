@@ -3,7 +3,7 @@
 //! The [`install_hooks`] function performs three non-destructive operations:
 //!
 //! 1. **Shell scripts** — Writes four executable bash scripts into `.claude/hooks/`
-//!    that delegate to `codegraph-mcp hook-*` subcommands.
+//!    that delegate to `codegraph hook-*` subcommands.
 //! 2. **`settings.json`** — Merges hook entries into `.claude/settings.json` so
 //!    Claude Code invokes the scripts at the right lifecycle points.
 //! 3. **`.mcp.json`** — Merges the CodeGraph MCP server entry so Claude Code
@@ -27,8 +27,8 @@ use crate::error::Result;
 /// Install CodeGraph hooks, scripts, and MCP configuration into `project_dir`.
 ///
 /// - `project_dir` — Root of the project (where `.claude/` lives).
-/// - `binary_path` — Path or name of the `codegraph-mcp` binary (e.g. `"codegraph-mcp"`
-///   or `"/usr/local/bin/codegraph-mcp"`).
+/// - `binary_path` — Path or name of the `codegraph` binary (e.g. `"codegraph"`
+///   or `"/usr/local/bin/codegraph"`).
 ///
 /// This function is idempotent: running it twice produces the same result.
 pub fn install_hooks(project_dir: &Path, binary_path: &str) -> Result<()> {
@@ -264,7 +264,7 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         let hooks_dir = tmp.path().join(".claude").join("hooks");
 
-        write_shell_scripts(&hooks_dir, "codegraph-mcp").unwrap();
+        write_shell_scripts(&hooks_dir, "codegraph").unwrap();
 
         for hook in HOOK_SCRIPTS {
             let path = hooks_dir.join(hook.filename);
@@ -273,7 +273,7 @@ mod tests {
             let content = fs::read_to_string(&path).unwrap();
             assert!(content.starts_with("#!/usr/bin/env bash"));
             assert!(content.contains(hook.subcommand));
-            assert!(content.contains("codegraph-mcp"));
+            assert!(content.contains("codegraph"));
 
             let mode = fs::metadata(&path).unwrap().permissions().mode();
             assert_eq!(
@@ -290,10 +290,10 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         let hooks_dir = tmp.path().join("hooks");
 
-        write_shell_scripts(&hooks_dir, "/opt/bin/codegraph-mcp").unwrap();
+        write_shell_scripts(&hooks_dir, "/opt/bin/codegraph").unwrap();
 
         let content = fs::read_to_string(hooks_dir.join("session-start.sh")).unwrap();
-        assert!(content.contains("/opt/bin/codegraph-mcp"));
+        assert!(content.contains("/opt/bin/codegraph"));
     }
 
     // -- merge_object_key tests -------------------------------------------
@@ -387,11 +387,11 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         let mcp = tmp.path().join(".mcp.json");
 
-        merge_mcp_config(&mcp, "codegraph-mcp").unwrap();
+        merge_mcp_config(&mcp, "codegraph").unwrap();
 
         let parsed: Value = serde_json::from_str(&fs::read_to_string(&mcp).unwrap()).unwrap();
         let cg = &parsed["mcpServers"]["codegraph"];
-        assert_eq!(cg["command"], json!("codegraph-mcp"));
+        assert_eq!(cg["command"], json!("codegraph"));
         assert_eq!(cg["args"], json!(["serve"]));
         assert_eq!(cg["env"]["CODEGRAPH_DB"], json!(".codegraph/codegraph.db"));
     }
@@ -414,7 +414,7 @@ mod tests {
         )
         .unwrap();
 
-        merge_mcp_config(&mcp, "codegraph-mcp").unwrap();
+        merge_mcp_config(&mcp, "codegraph").unwrap();
 
         let parsed: Value = serde_json::from_str(&fs::read_to_string(&mcp).unwrap()).unwrap();
         assert!(
@@ -433,7 +433,7 @@ mod tests {
     fn install_hooks_end_to_end() {
         let tmp = TempDir::new().unwrap();
 
-        install_hooks(tmp.path(), "codegraph-mcp").unwrap();
+        install_hooks(tmp.path(), "codegraph").unwrap();
 
         // Shell scripts exist
         let hooks_dir = tmp.path().join(".claude").join("hooks");
@@ -454,15 +454,15 @@ mod tests {
         let mcp: Value =
             serde_json::from_str(&fs::read_to_string(tmp.path().join(".mcp.json")).unwrap())
                 .unwrap();
-        assert_eq!(mcp["mcpServers"]["codegraph"]["command"], "codegraph-mcp");
+        assert_eq!(mcp["mcpServers"]["codegraph"]["command"], "codegraph");
     }
 
     #[test]
     fn install_hooks_is_idempotent() {
         let tmp = TempDir::new().unwrap();
 
-        install_hooks(tmp.path(), "codegraph-mcp").unwrap();
-        install_hooks(tmp.path(), "codegraph-mcp").unwrap();
+        install_hooks(tmp.path(), "codegraph").unwrap();
+        install_hooks(tmp.path(), "codegraph").unwrap();
 
         let settings: Value = serde_json::from_str(
             &fs::read_to_string(tmp.path().join(".claude").join("settings.json")).unwrap(),

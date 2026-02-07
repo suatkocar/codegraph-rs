@@ -1,0 +1,20 @@
+#!/bin/sh
+# Wrapper that delegates to the native codegraph binary.
+# The native binary is downloaded during npm postinstall.
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+NATIVE="$SCRIPT_DIR/codegraph-native"
+
+if [ -x "$NATIVE" ]; then
+  exec "$NATIVE" "$@"
+fi
+
+# Fallback: check if installed globally via curl
+if command -v codegraph >/dev/null 2>&1; then
+  exec codegraph "$@"
+fi
+
+echo "[codegraph] Binary not found. Try: npm rebuild @suatkocar/codegraph" >&2
+echo "[codegraph] Or install directly:" >&2
+echo "  curl -fsSL https://raw.githubusercontent.com/suatkocar/codegraph/main/install.sh | bash" >&2
+exit 1

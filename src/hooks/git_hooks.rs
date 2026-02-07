@@ -1,7 +1,7 @@
 //! Git hook integration — installs a `post-commit` hook that triggers
 //! incremental re-indexing after every commit.
 //!
-//! The hook runs `codegraph-mcp index <project_dir>` in the background so
+//! The hook runs `codegraph index <project_dir>` in the background so
 //! it never slows down the commit workflow. Installation is additive: if a
 //! `post-commit` hook already exists, the codegraph line is appended.
 
@@ -26,7 +26,7 @@ pub fn is_git_repo(project_dir: &str) -> bool {
 /// - If it exists but does not contain our marker, the codegraph line is appended.
 /// - If it already contains our marker, the file is left untouched (idempotent).
 ///
-/// The hook invokes `codegraph-mcp index <project_dir>` with stderr redirected
+/// The hook invokes `codegraph index <project_dir>` with stderr redirected
 /// to `/dev/null` and backgrounded (`&`) so the commit returns immediately.
 pub fn install_git_post_commit_hook(project_dir: &str) -> Result<()> {
     let root = Path::new(project_dir);
@@ -42,7 +42,7 @@ pub fn install_git_post_commit_hook(project_dir: &str) -> Result<()> {
     fs::create_dir_all(&hooks_dir)?;
 
     let hook_path = hooks_dir.join("post-commit");
-    let codegraph_line = format!("{MARKER}\ncodegraph-mcp index {project_dir} 2>/dev/null &");
+    let codegraph_line = format!("{MARKER}\ncodegraph index {project_dir} 2>/dev/null &");
 
     if hook_path.exists() {
         let content = fs::read_to_string(&hook_path)?;
@@ -93,7 +93,7 @@ pub fn uninstall_git_post_commit_hook(project_dir: &str) -> Result<()> {
     // Remove our marker line and the command line that follows it.
     let filtered: Vec<&str> = content
         .lines()
-        .filter(|line| !line.contains(MARKER) && !line.contains("codegraph-mcp index"))
+        .filter(|line| !line.contains(MARKER) && !line.contains("codegraph index"))
         .collect();
 
     // If only the shebang (or nothing) remains, delete the file.
@@ -155,7 +155,7 @@ mod tests {
         let content = fs::read_to_string(&hook).unwrap();
         assert!(content.starts_with("#!/usr/bin/env bash"));
         assert!(content.contains(MARKER));
-        assert!(content.contains("codegraph-mcp index"));
+        assert!(content.contains("codegraph index"));
         assert!(content.contains("2>/dev/null &"));
 
         // Check executable permission.
@@ -181,7 +181,7 @@ mod tests {
         );
         assert!(content.contains(MARKER), "codegraph marker added");
         assert!(
-            content.contains("codegraph-mcp index"),
+            content.contains("codegraph index"),
             "codegraph command added"
         );
     }
@@ -216,7 +216,7 @@ mod tests {
         // Start with an existing hook + our codegraph line.
         let hook = tmp.path().join(".git/hooks/post-commit");
         let content = format!(
-            "#!/usr/bin/env bash\necho 'user stuff'\n\n{MARKER}\ncodegraph-mcp index {dir} 2>/dev/null &\n"
+            "#!/usr/bin/env bash\necho 'user stuff'\n\n{MARKER}\ncodegraph index {dir} 2>/dev/null &\n"
         );
         fs::write(&hook, content).unwrap();
 
@@ -224,7 +224,7 @@ mod tests {
 
         let remaining = fs::read_to_string(&hook).unwrap();
         assert!(!remaining.contains(MARKER));
-        assert!(!remaining.contains("codegraph-mcp index"));
+        assert!(!remaining.contains("codegraph index"));
         assert!(
             remaining.contains("echo 'user stuff'"),
             "user content preserved"

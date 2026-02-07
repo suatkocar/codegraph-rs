@@ -3,16 +3,16 @@ use std::process;
 
 use clap::{Parser, Subcommand};
 
-use codegraph_mcp::cli::installer;
-use codegraph_mcp::db::schema::initialize_database;
-use codegraph_mcp::graph::ranking::GraphRanking;
-use codegraph_mcp::graph::search::{HybridSearch, SearchOptions};
-use codegraph_mcp::graph::store::GraphStore;
-use codegraph_mcp::indexer::{CodeParser, IndexOptions, IndexingPipeline};
-use codegraph_mcp::types::Language;
+use codegraph::cli::installer;
+use codegraph::db::schema::initialize_database;
+use codegraph::graph::ranking::GraphRanking;
+use codegraph::graph::search::{HybridSearch, SearchOptions};
+use codegraph::graph::store::GraphStore;
+use codegraph::indexer::{CodeParser, IndexOptions, IndexingPipeline};
+use codegraph::types::Language;
 
 #[derive(Parser)]
-#[command(name = "codegraph-mcp")]
+#[command(name = "codegraph")]
 #[command(
     version,
     about = "Codebase intelligence MCP server — semantic code graph with vector search"
@@ -167,16 +167,16 @@ fn main() {
             cmd_git_hooks(&action, &directory);
         }
         Commands::HookSessionStart => {
-            codegraph_mcp::hooks::handlers::handle_session_start();
+            codegraph::hooks::handlers::handle_session_start();
         }
         Commands::HookPromptSubmit => {
-            codegraph_mcp::hooks::handlers::handle_prompt_submit();
+            codegraph::hooks::handlers::handle_prompt_submit();
         }
         Commands::HookPreCompact => {
-            codegraph_mcp::hooks::handlers::handle_pre_compact();
+            codegraph::hooks::handlers::handle_pre_compact();
         }
         Commands::HookPostEdit => {
-            codegraph_mcp::hooks::handlers::handle_post_edit();
+            codegraph::hooks::handlers::handle_post_edit();
         }
     }
 }
@@ -225,7 +225,7 @@ fn cmd_init(directory: &str, non_interactive: bool) {
 
     // Detect frameworks
     let detected_frameworks =
-        codegraph_mcp::resolution::frameworks::detect_frameworks(directory);
+        codegraph::resolution::frameworks::detect_frameworks(directory);
     let framework_names: Vec<String> = detected_frameworks
         .iter()
         .map(|f| f.name.clone())
@@ -252,13 +252,13 @@ fn cmd_init(directory: &str, non_interactive: bool) {
         let store = open_store(db_path.to_str().unwrap());
         store
             .get_stats()
-            .unwrap_or(codegraph_mcp::graph::store::GraphStats {
+            .unwrap_or(codegraph::graph::store::GraphStats {
                 files: 0,
                 nodes: 0,
                 edges: 0,
             })
     } else {
-        codegraph_mcp::graph::store::GraphStats {
+        codegraph::graph::store::GraphStats {
             files: 0,
             nodes: 0,
             edges: 0,
@@ -274,9 +274,9 @@ fn cmd_init(directory: &str, non_interactive: bool) {
 
     // Step 8: Git hook (only if .git exists)
     let mut git_hook_installed = false;
-    let is_git = codegraph_mcp::hooks::git_hooks::is_git_repo(directory);
+    let is_git = codegraph::hooks::git_hooks::is_git_repo(directory);
     if is_git && installer::confirm("Install git post-commit hook?", non_interactive) {
-        match codegraph_mcp::hooks::git_hooks::install_git_post_commit_hook(directory) {
+        match codegraph::hooks::git_hooks::install_git_post_commit_hook(directory) {
             Ok(()) => git_hook_installed = true,
             Err(e) => eprintln!("  Warning: git hook install failed: {}", e),
         }
@@ -288,17 +288,17 @@ fn cmd_init(directory: &str, non_interactive: bool) {
         let store = open_store(db_path.to_str().unwrap());
         let s = store
             .get_stats()
-            .unwrap_or(codegraph_mcp::graph::store::GraphStats {
+            .unwrap_or(codegraph::graph::store::GraphStats {
                 files: 0,
                 nodes: 0,
                 edges: 0,
             });
-        let proj_stats = codegraph_mcp::hooks::claude_template::ProjectStats {
+        let proj_stats = codegraph::hooks::claude_template::ProjectStats {
             total_nodes: s.nodes,
             total_edges: s.edges,
             ..Default::default()
         };
-        if codegraph_mcp::hooks::claude_template::generate_claude_md(directory, &proj_stats)
+        if codegraph::hooks::claude_template::generate_claude_md(directory, &proj_stats)
             .is_ok()
         {
             claude_md_generated = true;
@@ -326,9 +326,9 @@ fn cmd_install_hooks(directory: &str) {
     // Use the current binary's path as the default binary reference
     let binary_path = std::env::current_exe()
         .map(|p| p.to_string_lossy().to_string())
-        .unwrap_or_else(|_| "codegraph-mcp".to_string());
+        .unwrap_or_else(|_| "codegraph".to_string());
 
-    codegraph_mcp::hooks::install::install_hooks(&root, &binary_path).unwrap_or_else(|e| {
+    codegraph::hooks::install::install_hooks(&root, &binary_path).unwrap_or_else(|e| {
         eprintln!("Error: failed to install hooks: {}", e);
         process::exit(1);
     });
@@ -425,7 +425,7 @@ fn cmd_serve(db_path: &str) {
     let db = PathBuf::from(db_path);
     if !db.exists() {
         eprintln!("Error: database not found at '{}'", db_path);
-        eprintln!("Run `codegraph-mcp index <dir>` first to create an index.");
+        eprintln!("Run `codegraph index <dir>` first to create an index.");
         process::exit(1);
     }
 
@@ -441,7 +441,7 @@ fn cmd_serve(db_path: &str) {
         });
 
     rt.block_on(async {
-        if let Err(e) = codegraph_mcp::mcp::server::run_server(store).await {
+        if let Err(e) = codegraph::mcp::server::run_server(store).await {
             eprintln!("Error: MCP server failed: {}", e);
             process::exit(1);
         }
@@ -450,15 +450,15 @@ fn cmd_serve(db_path: &str) {
 
 fn cmd_dead_code(db_path: &str, kind_filter: Option<&str>) {
     let store = open_store(db_path);
-    let kinds: Vec<codegraph_mcp::types::NodeKind> = match kind_filter {
+    let kinds: Vec<codegraph::types::NodeKind> = match kind_filter {
         Some(k) => k
             .split(',')
-            .filter_map(|s| codegraph_mcp::types::NodeKind::from_str_loose(s.trim()))
+            .filter_map(|s| codegraph::types::NodeKind::from_str_loose(s.trim()))
             .collect(),
         None => Vec::new(),
     };
 
-    let results = codegraph_mcp::resolution::dead_code::find_dead_code(&store.conn, &kinds);
+    let results = codegraph::resolution::dead_code::find_dead_code(&store.conn, &kinds);
     if results.is_empty() {
         println!("No dead code found.");
         return;
@@ -474,7 +474,7 @@ fn cmd_dead_code(db_path: &str, kind_filter: Option<&str>) {
 }
 
 fn cmd_frameworks(directory: &str) {
-    let frameworks = codegraph_mcp::resolution::frameworks::detect_frameworks(directory);
+    let frameworks = codegraph::resolution::frameworks::detect_frameworks(directory);
     if frameworks.is_empty() {
         println!("No frameworks detected.");
         return;
@@ -498,7 +498,7 @@ fn cmd_languages(db_path: &str) {
     let store = open_store(db_path);
     let stats = store
         .get_stats()
-        .unwrap_or(codegraph_mcp::graph::store::GraphStats {
+        .unwrap_or(codegraph::graph::store::GraphStats {
             files: 0,
             nodes: 0,
             edges: 0,
@@ -527,7 +527,7 @@ fn cmd_languages(db_path: &str) {
 fn cmd_git_hooks(action: &str, directory: &str) {
     match action {
         "install" => {
-            if let Err(e) = codegraph_mcp::hooks::git_hooks::install_git_post_commit_hook(directory)
+            if let Err(e) = codegraph::hooks::git_hooks::install_git_post_commit_hook(directory)
             {
                 eprintln!("Error: {}", e);
                 process::exit(1);
@@ -536,7 +536,7 @@ fn cmd_git_hooks(action: &str, directory: &str) {
         }
         "uninstall" => {
             if let Err(e) =
-                codegraph_mcp::hooks::git_hooks::uninstall_git_post_commit_hook(directory)
+                codegraph::hooks::git_hooks::uninstall_git_post_commit_hook(directory)
             {
                 eprintln!("Error: {}", e);
                 process::exit(1);
@@ -554,7 +554,7 @@ fn cmd_stats(db_path: &str) {
     let db = PathBuf::from(db_path);
     if !db.exists() {
         eprintln!("Error: database not found at '{}'", db_path);
-        eprintln!("Run `codegraph-mcp index <dir>` first to create an index.");
+        eprintln!("Run `codegraph index <dir>` first to create an index.");
         process::exit(1);
     }
 

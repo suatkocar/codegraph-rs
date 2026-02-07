@@ -18,17 +18,17 @@ High-performance Rust codebase intelligence engine. Builds a semantic code graph
 ## Key Commands
 - `cargo build --release` — Build optimized binary (~45MB with embeddings, ~29MB without)
 - `cargo test` — Run all 314 tests
-- `./target/release/codegraph-mcp init <dir>` — Interactive setup (index + hooks + MCP + git hooks + CLAUDE.md)
-- `./target/release/codegraph-mcp init <dir> --yes` — Non-interactive setup (CI/scripting)
-- `./target/release/codegraph-mcp index <dir>` — Index a codebase
-- `./target/release/codegraph-mcp serve` — Start MCP server (stdio)
-- `./target/release/codegraph-mcp query <text>` — CLI search
-- `./target/release/codegraph-mcp stats` — Show index statistics (includes unresolved refs)
-- `./target/release/codegraph-mcp impact <symbol>` — Blast radius analysis
-- `./target/release/codegraph-mcp dead-code` — Find unused symbols
-- `./target/release/codegraph-mcp frameworks <dir>` — Detect frameworks
-- `./target/release/codegraph-mcp languages` — Language breakdown
-- `./target/release/codegraph-mcp git-hooks install|uninstall` — Git hook management
+- `./target/release/codegraph init <dir>` — Interactive setup (index + hooks + MCP + git hooks + CLAUDE.md)
+- `./target/release/codegraph init <dir> --yes` — Non-interactive setup (CI/scripting)
+- `./target/release/codegraph index <dir>` — Index a codebase
+- `./target/release/codegraph serve` — Start MCP server (stdio)
+- `./target/release/codegraph query <text>` — CLI search
+- `./target/release/codegraph stats` — Show index statistics (includes unresolved refs)
+- `./target/release/codegraph impact <symbol>` — Blast radius analysis
+- `./target/release/codegraph dead-code` — Find unused symbols
+- `./target/release/codegraph frameworks <dir>` — Detect frameworks
+- `./target/release/codegraph languages` — Language breakdown
+- `./target/release/codegraph git-hooks install|uninstall` — Git hook management
 
 ## Supported Languages (15)
 TypeScript, TSX, JavaScript, JSX, Python, Go, Rust, Java, C, C++, C#, PHP, Ruby, Swift, Kotlin
