@@ -30,7 +30,7 @@ cargo install --git https://github.com/suatkocar/codegraph
 
 ```bash
 # One command sets up everything
-codegraph init .
+codegraph init
 ```
 
 That's it. This single command:

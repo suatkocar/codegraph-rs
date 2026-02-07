@@ -116,7 +116,7 @@ main() {
   echo ""
   echo "  Get started:"
   echo "    cd your-project"
-  echo "    codegraph init ."
+  echo "    codegraph init"
   echo ""
   echo "  That's it. Open Claude Code and your codebase is graph-aware."
   echo ""

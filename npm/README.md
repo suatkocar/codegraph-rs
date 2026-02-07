@@ -2,25 +2,26 @@
 
 **Codebase intelligence as an MCP server.** Native Rust. Sub-second indexing. Zero runtime dependencies.
 
-This npm package installs the `codegraph` binary for your platform.
-
 ## Install
 
 ```bash
-npx @suatkocar/codegraph init .
+npx @suatkocar/codegraph init
 ```
+
+One command: downloads the binary, indexes your codebase, registers MCP server, installs hooks.
 
 Or install globally:
 
 ```bash
 npm install -g @suatkocar/codegraph
-codegraph init .
+codegraph init
 ```
 
 Or install without npm:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/suatkocar/codegraph/main/install.sh | bash
+codegraph init
 ```
 
 ## What It Does
