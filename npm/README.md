@@ -26,6 +26,6 @@ codegraph init
 
 ## What It Does
 
-CodeGraph builds a semantic graph of your codebase (15 languages, 13 MCP tools) and makes it instantly available to AI coding agents. **68% fewer tokens** per task compared to reading all files.
+CodeGraph builds a semantic graph of your codebase (32 languages, 44 MCP tools) and makes it instantly available to AI coding agents. **68% fewer tokens** per task compared to reading all files.
 
 See [GitHub](https://github.com/suatkocar/codegraph) for full documentation.

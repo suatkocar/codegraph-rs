@@ -119,7 +119,7 @@ async function main() {
   try {
     // Try GitHub release first
     const release = await getLatestRelease();
-    const assetName = `${BINARY}-${target}.tar.gz`;
+    const assetName = `${BINARY}-${release.tag_name}-${target}.tar.gz`;
     const asset = release.assets.find((a) => a.name === assetName);
 
     if (!asset) {

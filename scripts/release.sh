@@ -33,7 +33,7 @@ cargo build --release --no-default-features 2>&1 | tail -1
 
 # 3. Commit + push
 info "Committing and pushing..."
-git add -A
+git add Cargo.toml Cargo.lock npm/package.json
 git commit -m "v${VERSION}"
 git push origin main
 
