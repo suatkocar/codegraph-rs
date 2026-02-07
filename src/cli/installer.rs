@@ -87,7 +87,7 @@ pub fn print_summary(
         );
     }
     if hooks {
-        println!("  {} Installed 4 Claude Code hooks", style("✓").green());
+        println!("  {} Installed 10 Claude Code hooks", style("✓").green());
     }
     if mcp {
         println!("  {} Registered MCP server", style("✓").green());

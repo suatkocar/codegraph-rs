@@ -58,21 +58,61 @@ fn render_section(stats: &ProjectStats) -> String {
     format!(
         r#"{SECTION_HEADER}
 
-This project is indexed by CodeGraph. Use the following MCP tools for code navigation:
+This project is indexed by CodeGraph (32 languages, 44 MCP tools). Use the tools below for code navigation instead of grep/glob — they understand your project's structure, dependencies, and call graphs.
 
-- `codegraph_query "search term"` — Find symbols by keyword + semantic search
-- `codegraph_dependencies "SymbolName"` — What does this symbol depend on?
-- `codegraph_callers "functionName"` — Who calls this function?
-- `codegraph_callees "functionName"` — What does this function call?
-- `codegraph_impact "file.ts"` — What breaks if you change this file?
-- `codegraph_structure` — Get project overview with PageRank-ranked symbols
-- `codegraph_tests "SymbolName"` — Find test coverage for a symbol
-- `codegraph_context "task description"` — Get optimal context for a task
-- `codegraph_node "SymbolName"` — Get full details for a symbol (body, docs, relationships)
-- `codegraph_diagram "SymbolName"` — Generate Mermaid dependency diagram
-- `codegraph_dead_code` — Find potentially unused/dead code symbols
-- `codegraph_frameworks` — Detect frameworks and libraries in the project
-- `codegraph_languages` — Show language breakdown statistics
+### Core (13 tools)
+- `codegraph_query "search term"` — Hybrid keyword + semantic search
+- `codegraph_dependencies "SymbolName"` — Forward dependency traversal
+- `codegraph_callers "functionName"` — Reverse call graph
+- `codegraph_callees "functionName"` — Forward call graph
+- `codegraph_impact "file.ts"` — Blast radius analysis
+- `codegraph_structure` — Project overview with PageRank-ranked symbols
+- `codegraph_tests "SymbolName"` — Test coverage discovery
+- `codegraph_context "task description"` — LLM context assembly (token-budgeted)
+- `codegraph_node "SymbolName"` — Direct symbol lookup with relationships
+- `codegraph_diagram "SymbolName"` — Mermaid diagram generation
+- `codegraph_dead_code` — Find unused symbols
+- `codegraph_frameworks` — Detect project frameworks
+- `codegraph_languages` — Language breakdown statistics
+
+### Git Integration (9 tools)
+- `codegraph_blame "file.rs"` — Line-by-line git blame
+- `codegraph_file_history "file.rs"` — File commit history
+- `codegraph_recent_changes` — Recent repository commits
+- `codegraph_commit_diff "abc123"` — Commit diff details
+- `codegraph_symbol_history "functionName"` — Symbol modification history
+- `codegraph_branch_info` — Branch status and tracking info
+- `codegraph_modified_files` — Working tree changes (staged/unstaged)
+- `codegraph_hotspots` — Churn-based hotspot detection
+- `codegraph_contributors` — Contributor statistics
+
+### Security (9 tools)
+- `codegraph_scan_security` — YAML rule-based vulnerability scan
+- `codegraph_check_owasp` — OWASP Top 10 2021 scan
+- `codegraph_check_cwe` — CWE Top 25 scan
+- `codegraph_explain_vulnerability "CWE-89"` — CWE explanation + remediation
+- `codegraph_suggest_fix` — Fix suggestion for findings
+- `codegraph_find_injections` — SQL/XSS/command injection via taint analysis
+- `codegraph_taint_sources` — Identify taint sources in code
+- `codegraph_security_summary` — Comprehensive risk assessment
+- `codegraph_trace_taint "source"` — Data flow tracing from source to sink
+
+### Repository & Analysis (7 tools)
+- `codegraph_stats` — Index statistics (nodes, edges, files)
+- `codegraph_circular_imports` — Cycle detection (Tarjan SCC)
+- `codegraph_project_tree` — Directory tree with symbol counts
+- `codegraph_find_references "symbol"` — Cross-reference search
+- `codegraph_export_map` — Module export listing
+- `codegraph_import_graph` — Import graph visualization
+- `codegraph_file "file.rs"` — File symbol listing
+
+### Call Graph & Data Flow (6 tools)
+- `codegraph_find_path "fnA" "fnB"` — Shortest call path between functions
+- `codegraph_complexity` — Cyclomatic + cognitive complexity per function
+- `codegraph_data_flow "variable"` — Variable def-use chains
+- `codegraph_dead_stores` — Assignments never read
+- `codegraph_find_uninitialized` — Variables used before initialization
+- `codegraph_reaching_defs "variable"` — Reaching definition analysis
 
 **Prefer CodeGraph tools over grep/glob** for finding code. They understand your project's structure, dependencies, and call graphs — not just text matches.
 
@@ -294,6 +334,7 @@ mod tests {
     fn render_section_contains_all_tools() {
         let section = render_section(&sample_stats());
         let expected_tools = [
+            // Core (13)
             "codegraph_query",
             "codegraph_dependencies",
             "codegraph_callers",
@@ -307,7 +348,43 @@ mod tests {
             "codegraph_dead_code",
             "codegraph_frameworks",
             "codegraph_languages",
+            // Git (9)
+            "codegraph_blame",
+            "codegraph_file_history",
+            "codegraph_recent_changes",
+            "codegraph_commit_diff",
+            "codegraph_symbol_history",
+            "codegraph_branch_info",
+            "codegraph_modified_files",
+            "codegraph_hotspots",
+            "codegraph_contributors",
+            // Security (9)
+            "codegraph_scan_security",
+            "codegraph_check_owasp",
+            "codegraph_check_cwe",
+            "codegraph_explain_vulnerability",
+            "codegraph_suggest_fix",
+            "codegraph_find_injections",
+            "codegraph_taint_sources",
+            "codegraph_security_summary",
+            "codegraph_trace_taint",
+            // Repo & Analysis (7)
+            "codegraph_stats",
+            "codegraph_circular_imports",
+            "codegraph_project_tree",
+            "codegraph_find_references",
+            "codegraph_export_map",
+            "codegraph_import_graph",
+            "codegraph_file",
+            // Call Graph & Data Flow (6)
+            "codegraph_find_path",
+            "codegraph_complexity",
+            "codegraph_data_flow",
+            "codegraph_dead_stores",
+            "codegraph_find_uninitialized",
+            "codegraph_reaching_defs",
         ];
+        assert_eq!(expected_tools.len(), 44, "should test all 44 tools");
         for tool in expected_tools {
             assert!(section.contains(tool), "missing tool: {tool}");
         }
