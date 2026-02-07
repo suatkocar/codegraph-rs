@@ -232,7 +232,13 @@ mod tests {
     #[test]
     fn core_tables_exist() {
         let conn = setup();
-        for table in &["nodes", "edges", "file_hashes", "embedding_cache", "unresolved_refs"] {
+        for table in &[
+            "nodes",
+            "edges",
+            "file_hashes",
+            "embedding_cache",
+            "unresolved_refs",
+        ] {
             assert!(
                 object_exists(&conn, "table", table),
                 "table '{table}' should exist"

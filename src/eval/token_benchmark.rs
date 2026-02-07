@@ -45,11 +45,7 @@ pub struct TokenBenchmarkSummary {
 ///
 /// **CodeGraph**: Use `ContextAssembler::assemble_context()` for the same
 /// query with a token budget. The graph selects only relevant symbols.
-pub fn benchmark_query(
-    store: &GraphStore,
-    query: &str,
-    budget: usize,
-) -> TokenBenchmarkResult {
+pub fn benchmark_query(store: &GraphStore, query: &str, budget: usize) -> TokenBenchmarkResult {
     // --- Baseline: read ALL files in the project ---
     let baseline_files = get_all_files(store);
     let baseline_text = load_all_file_content(store, &baseline_files);

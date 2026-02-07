@@ -290,7 +290,12 @@ impl<'a> IndexingPipeline<'a> {
             .collect();
         let all_edges_owned: Vec<CodeEdge> = all_edges.iter().map(|e| (*e).clone()).collect();
 
-        let resolution_result = resolve_imports(&all_edges_owned, &indexed_files, &node_index, &nodes_by_file);
+        let resolution_result = resolve_imports(
+            &all_edges_owned,
+            &indexed_files,
+            &node_index,
+            &nodes_by_file,
+        );
 
         // Group resolved edges by their source file for merging
         let mut resolved_by_file: HashMap<String, Vec<CodeEdge>> = HashMap::new();
@@ -419,10 +424,8 @@ impl<'a> IndexingPipeline<'a> {
         )?;
 
         // Cross-file import resolution for single file re-index
-        let mut indexed_files: HashSet<String> = existing
-            .iter()
-            .map(|n| n.file_path.clone())
-            .collect();
+        let mut indexed_files: HashSet<String> =
+            existing.iter().map(|n| n.file_path.clone()).collect();
         indexed_files.insert(rel_path.clone());
 
         let mut nodes_by_file: HashMap<String, Vec<CodeNode>> = HashMap::new();
@@ -434,7 +437,8 @@ impl<'a> IndexingPipeline<'a> {
         }
         nodes_by_file.insert(rel_path.clone(), nodes.clone());
 
-        let resolution_result = resolve_imports(&edges, &indexed_files, &node_index, &nodes_by_file);
+        let resolution_result =
+            resolve_imports(&edges, &indexed_files, &node_index, &nodes_by_file);
         edges.extend(resolution_result.resolved_edges);
 
         // Clear and persist unresolved refs for this file

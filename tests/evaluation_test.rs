@@ -46,7 +46,11 @@ fn eval_project_indexes_successfully() {
 
     // The eval-project has 11 TypeScript files with realistic code.
     // We expect a meaningful number of nodes and edges.
-    assert!(stats.files >= 10, "Expected >= 10 files, got {}", stats.files);
+    assert!(
+        stats.files >= 10,
+        "Expected >= 10 files, got {}",
+        stats.files
+    );
     assert!(
         stats.nodes >= 30,
         "Expected >= 30 nodes, got {}",
@@ -72,15 +76,11 @@ fn evaluation_harness_produces_metrics() {
     eprintln!("  Edge count OK: {}", report.edge_count_ok);
     eprintln!(
         "  Search  — P: {:.2}, R: {:.2}, F1: {:.2}",
-        report.search_metrics.precision,
-        report.search_metrics.recall,
-        report.search_metrics.f1
+        report.search_metrics.precision, report.search_metrics.recall, report.search_metrics.f1
     );
     eprintln!(
         "  Callers — P: {:.2}, R: {:.2}, F1: {:.2}",
-        report.caller_metrics.precision,
-        report.caller_metrics.recall,
-        report.caller_metrics.f1
+        report.caller_metrics.precision, report.caller_metrics.recall, report.caller_metrics.f1
     );
     eprintln!(
         "  Dead    — P: {:.2}, R: {:.2}, F1: {:.2}",
@@ -135,10 +135,7 @@ fn token_reduction_benchmark() {
     for result in &summary.results {
         eprintln!(
             "  {}: baseline={} codegraph={} reduction={:.1}%",
-            result.task,
-            result.baseline_tokens,
-            result.codegraph_tokens,
-            result.reduction_pct
+            result.task, result.baseline_tokens, result.codegraph_tokens, result.reduction_pct
         );
         // CodeGraph context should always be smaller than the full codebase
         assert!(

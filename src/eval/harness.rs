@@ -138,8 +138,7 @@ pub fn evaluate_search(store: &GraphStore, queries: &[SearchQuery]) -> EvalMetri
         let results = search.search(&sq.query, &opts).unwrap_or_default();
 
         let actual_symbols: HashSet<String> = results.iter().map(|r| r.name.clone()).collect();
-        let expected_symbols: HashSet<String> =
-            sq.expected_top5_symbols.iter().cloned().collect();
+        let expected_symbols: HashSet<String> = sq.expected_top5_symbols.iter().cloned().collect();
 
         let metrics = EvalMetrics::compute(&expected_symbols, &actual_symbols);
         all_metrics.push(metrics);

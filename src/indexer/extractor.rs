@@ -499,9 +499,7 @@ pub fn populate_qualified_names(nodes: &mut Vec<CodeNode>) {
                 // (largest range first) to build a chained qualified name.
                 let mut enclosing: Vec<(&str, u32)> = containers
                     .iter()
-                    .filter(|(_, start, end)| {
-                        *start <= node.start_line && node.end_line <= *end
-                    })
+                    .filter(|(_, start, end)| *start <= node.start_line && node.end_line <= *end)
                     .map(|(name, start, end)| (name.as_str(), end - start))
                     .collect();
 
@@ -2054,7 +2052,8 @@ class UserService {
         let func = nodes.iter().find(|n| n.name == "greet");
         assert!(func.is_some(), "should find greet function");
         assert_eq!(
-            func.unwrap().qualified_name, None,
+            func.unwrap().qualified_name,
+            None,
             "standalone function should NOT have qualified_name"
         );
     }
@@ -2101,9 +2100,9 @@ impl Point {
         // impl), the tightest enclosing one is used.
         for method in &method_nodes {
             // Check if any Point node encloses this method
-            let enclosed = point_nodes.iter().any(|p| {
-                p.start_line <= method.start_line && method.end_line <= p.end_line
-            });
+            let enclosed = point_nodes
+                .iter()
+                .any(|p| p.start_line <= method.start_line && method.end_line <= p.end_line);
             if enclosed {
                 assert!(
                     method.qualified_name.is_some(),
@@ -2135,7 +2134,8 @@ class Animal {
         let class = nodes.iter().find(|n| n.name == "Animal");
         assert!(class.is_some(), "should find Animal class");
         assert_eq!(
-            class.unwrap().qualified_name, None,
+            class.unwrap().qualified_name,
+            None,
             "class itself should NOT have qualified_name"
         );
     }

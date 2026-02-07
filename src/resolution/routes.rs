@@ -463,13 +463,7 @@ mod tests {
     use super::*;
     use crate::types::{Language, NodeKind};
 
-    fn make_node(
-        id: &str,
-        name: &str,
-        file: &str,
-        kind: NodeKind,
-        body: Option<&str>,
-    ) -> CodeNode {
+    fn make_node(id: &str, name: &str, file: &str, kind: NodeKind, body: Option<&str>) -> CodeNode {
         CodeNode {
             id: id.to_string(),
             name: name.to_string(),
@@ -536,13 +530,9 @@ mod tests {
             "Should create edges for same-named React components across files"
         );
         assert!(edges.iter().all(|e| e.kind == EdgeKind::References));
-        assert!(edges.iter().all(|e| e
-            .metadata
-            .as_ref()
-            .unwrap()
-            .get("framework")
-            .unwrap()
-            == "react"));
+        assert!(edges
+            .iter()
+            .all(|e| e.metadata.as_ref().unwrap().get("framework").unwrap() == "react"));
     }
 
     #[test]
@@ -665,9 +655,7 @@ mod tests {
             "Should create edges for each view reference, got {}",
             edges.len()
         );
-        assert!(edges
-            .iter()
-            .any(|e| e.target == "fn:views.py:list_users:1"));
+        assert!(edges.iter().any(|e| e.target == "fn:views.py:list_users:1"));
         assert!(edges
             .iter()
             .any(|e| e.target == "fn:views.py:create_user:10"));
@@ -710,13 +698,9 @@ mod tests {
         assert!(edges
             .iter()
             .any(|e| e.target == "method:app/controllers/users_controller.rb:show:5"));
-        assert!(edges.iter().all(|e| e
-            .metadata
-            .as_ref()
-            .unwrap()
-            .get("framework")
-            .unwrap()
-            == "rails"));
+        assert!(edges
+            .iter()
+            .all(|e| e.metadata.as_ref().unwrap().get("framework").unwrap() == "rails"));
     }
 
     // -- Laravel route resolution ---------------------------------------------
@@ -753,15 +737,12 @@ mod tests {
             !edges.is_empty(),
             "Should create edges for Laravel route -> controller"
         );
-        assert!(edges.iter().any(|e| e.target
-            == "class:app/Http/Controllers/UserController.php:UserController:1"));
-        assert!(edges.iter().all(|e| e
-            .metadata
-            .as_ref()
-            .unwrap()
-            .get("framework")
-            .unwrap()
-            == "laravel"));
+        assert!(edges
+            .iter()
+            .any(|e| e.target == "class:app/Http/Controllers/UserController.php:UserController:1"));
+        assert!(edges
+            .iter()
+            .all(|e| e.metadata.as_ref().unwrap().get("framework").unwrap() == "laravel"));
     }
 
     // -- Spring Boot route resolution -----------------------------------------
@@ -798,13 +779,9 @@ mod tests {
         assert!(edges
             .iter()
             .any(|e| e.target == "class:UserService.java:UserService:1"));
-        assert!(edges.iter().all(|e| e
-            .metadata
-            .as_ref()
-            .unwrap()
-            .get("framework")
-            .unwrap()
-            == "spring"));
+        assert!(edges
+            .iter()
+            .all(|e| e.metadata.as_ref().unwrap().get("framework").unwrap() == "spring"));
     }
 
     // -- Framework dispatch ---------------------------------------------------
@@ -871,15 +848,11 @@ mod tests {
 
         let react_edges: Vec<_> = edges
             .iter()
-            .filter(|e| {
-                e.metadata.as_ref().unwrap().get("framework").unwrap() == "react"
-            })
+            .filter(|e| e.metadata.as_ref().unwrap().get("framework").unwrap() == "react")
             .collect();
         let express_edges: Vec<_> = edges
             .iter()
-            .filter(|e| {
-                e.metadata.as_ref().unwrap().get("framework").unwrap() == "express"
-            })
+            .filter(|e| e.metadata.as_ref().unwrap().get("framework").unwrap() == "express")
             .collect();
 
         assert!(!react_edges.is_empty(), "Should have React edges");

@@ -473,11 +473,7 @@ pub fn handle_pre_tool_use() {
 
             match store.get_nodes_by_file(rel_path) {
                 Ok(nodes) if !nodes.is_empty() => {
-                    let mut ctx = format!(
-                        "CodeGraph: {} symbols in {}:\n",
-                        nodes.len(),
-                        rel_path
-                    );
+                    let mut ctx = format!("CodeGraph: {} symbols in {}:\n", nodes.len(), rel_path);
                     for node in nodes.iter().take(20) {
                         ctx.push_str(&format!(
                             "  - {} ({}) L{}\n",
@@ -605,8 +601,7 @@ pub fn handle_subagent_start() {
 
         // Detect frameworks
         let cwd_str = cwd.to_string_lossy().to_string();
-        let frameworks =
-            crate::resolution::frameworks::detect_frameworks(&cwd_str);
+        let frameworks = crate::resolution::frameworks::detect_frameworks(&cwd_str);
         if !frameworks.is_empty() {
             overview.push_str("Frameworks: ");
             let names: Vec<String> = frameworks.iter().map(|f| f.name.clone()).collect();
@@ -730,10 +725,7 @@ pub fn handle_post_tool_failure() {
                     tool_name
                 );
                 for r in &results {
-                    ctx.push_str(&format!(
-                        "  - {} ({}) in {}\n",
-                        r.name, r.kind, r.file_path,
-                    ));
+                    ctx.push_str(&format!("  - {} ({}) in {}\n", r.name, r.kind, r.file_path,));
                     if let Some(ref snippet) = r.snippet {
                         let short = if snippet.len() > 80 {
                             &snippet[..80]
@@ -887,7 +879,10 @@ pub fn handle_task_completed() {
 
         let mut issues = Vec::new();
         if !dead.is_empty() {
-            issues.push(format!("{} potentially unused symbols detected", dead.len()));
+            issues.push(format!(
+                "{} potentially unused symbols detected",
+                dead.len()
+            ));
             for d in dead.iter().take(5) {
                 issues.push(format!("  - {} ({}) in {}", d.name, d.kind, d.file_path));
             }
@@ -898,16 +893,12 @@ pub fn handle_task_completed() {
 
         if issues.is_empty() {
             eprintln!("[codegraph] task_completed: quality gate passed");
-            emit(json!({"continue": true, "message": "CodeGraph: quality gate passed — no dead code or unresolved refs."}));
+            emit(
+                json!({"continue": true, "message": "CodeGraph: quality gate passed — no dead code or unresolved refs."}),
+            );
         } else {
-            let message = format!(
-                "CodeGraph quality gate:\n{}",
-                issues.join("\n")
-            );
-            eprintln!(
-                "[codegraph] task_completed: {} issues found",
-                issues.len()
-            );
+            let message = format!("CodeGraph quality gate:\n{}", issues.join("\n"));
+            eprintln!("[codegraph] task_completed: {} issues found", issues.len());
             emit(json!({"continue": true, "message": message}));
         }
     });

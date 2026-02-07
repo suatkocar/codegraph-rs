@@ -736,7 +736,9 @@ impl CodeGraphServer {
         #[schemars(description = "Symbol name or node ID to look up")]
         symbol: String,
         #[tool(param)]
-        #[schemars(description = "Include relationships (callers, callees, dependencies) in the response (default false)")]
+        #[schemars(
+            description = "Include relationships (callers, callees, dependencies) in the response (default false)"
+        )]
         include_relations: Option<bool>,
     ) -> String {
         let node = match self.resolve_symbol(&symbol) {
@@ -805,16 +807,22 @@ impl CodeGraphServer {
 
             // Outgoing edges (all types)
             if let Ok(out_edges) = store.get_out_edges(&node.id, None) {
-                result["outgoingEdges"] = serde_json::json!(out_edges.iter().map(|e| serde_json::json!({
-                    "target": e.target, "kind": e.kind.as_str(),
-                })).collect::<Vec<_>>());
+                result["outgoingEdges"] = serde_json::json!(out_edges
+                    .iter()
+                    .map(|e| serde_json::json!({
+                        "target": e.target, "kind": e.kind.as_str(),
+                    }))
+                    .collect::<Vec<_>>());
             }
 
             // Incoming edges (all types)
             if let Ok(in_edges) = store.get_in_edges(&node.id, None) {
-                result["incomingEdges"] = serde_json::json!(in_edges.iter().map(|e| serde_json::json!({
-                    "source": e.source, "kind": e.kind.as_str(),
-                })).collect::<Vec<_>>());
+                result["incomingEdges"] = serde_json::json!(in_edges
+                    .iter()
+                    .map(|e| serde_json::json!({
+                        "source": e.source, "kind": e.kind.as_str(),
+                    }))
+                    .collect::<Vec<_>>());
             }
         }
 
@@ -1221,9 +1229,7 @@ mod tests {
                 .unwrap();
         }
 
-        let result = server
-            .codegraph_node("processData".to_string(), None)
-            .await;
+        let result = server.codegraph_node("processData".to_string(), None).await;
         let json: serde_json::Value = serde_json::from_str(&result).unwrap();
 
         assert_eq!(json["name"].as_str().unwrap(), "processData");

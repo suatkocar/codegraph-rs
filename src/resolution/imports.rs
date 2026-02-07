@@ -153,8 +153,8 @@ pub fn resolve_imports(
             // Named imports: link to specific symbols
             for name in &imported_names {
                 // First try: find by name in the target file
-                let target_node = target_nodes
-                    .and_then(|nodes| nodes.iter().find(|n| n.name == *name));
+                let target_node =
+                    target_nodes.and_then(|nodes| nodes.iter().find(|n| n.name == *name));
 
                 if let Some(target) = target_node {
                     resolved_edges.push(CodeEdge {
@@ -268,10 +268,7 @@ fn resolve_specifier(
 /// Given: `src/components/Button`, tries extension patterns against
 /// the indexed file set (same logic as relative imports, but starting
 /// from the already-expanded alias path).
-fn resolve_alias_path(
-    expanded_path: &str,
-    indexed_files: &HashSet<String>,
-) -> Option<String> {
+fn resolve_alias_path(expanded_path: &str, indexed_files: &HashSet<String>) -> Option<String> {
     for ext in EXTENSION_PATTERNS {
         let candidate = format!("{}{}", expanded_path, ext);
         if indexed_files.contains(&candidate) {
@@ -449,11 +446,7 @@ mod tests {
         line: u32,
         names: Option<&str>,
     ) -> CodeEdge {
-        let metadata = names.map(|n| {
-            [("names".to_string(), n.to_string())]
-                .into_iter()
-                .collect()
-        });
+        let metadata = names.map(|n| [("names".to_string(), n.to_string())].into_iter().collect());
         CodeEdge {
             source: format!("file:{}", source_file),
             target: format!("module:{}", module_spec),
@@ -478,10 +471,7 @@ mod tests {
 
     #[test]
     fn normalize_handles_multiple_dotdot() {
-        assert_eq!(
-            normalize_path("src/a/b/../../c/d"),
-            "src/c/d"
-        );
+        assert_eq!(normalize_path("src/a/b/../../c/d"), "src/c/d");
     }
 
     // -- resolve_specifier ----------------------------------------------------
@@ -589,24 +579,25 @@ mod tests {
             .push(utils_class.clone());
 
         let mut nodes_by_file: HashMap<String, Vec<CodeNode>> = HashMap::new();
-        nodes_by_file.insert(
-            "src/utils.ts".to_string(),
-            vec![utils_fn, utils_class],
-        );
+        nodes_by_file.insert("src/utils.ts".to_string(), vec![utils_fn, utils_class]);
 
         let result = resolve_imports(&edges, &indexed_files, &node_index, &nodes_by_file);
 
         assert_eq!(result.resolved_edges.len(), 2);
-        assert!(result.resolved_edges
+        assert!(result
+            .resolved_edges
             .iter()
             .any(|e| e.target == "fn:src/utils.ts:validate:5"));
-        assert!(result.resolved_edges
+        assert!(result
+            .resolved_edges
             .iter()
             .any(|e| e.target == "class:src/utils.ts:Parser:20"));
         // All resolved edges should have metadata with resolved path
-        assert!(result.resolved_edges
-            .iter()
-            .all(|e| e.metadata.as_ref().unwrap().contains_key("resolved")));
+        assert!(result.resolved_edges.iter().all(|e| e
+            .metadata
+            .as_ref()
+            .unwrap()
+            .contains_key("resolved")));
         // No unresolved refs — both imports resolved
         assert!(result.unresolved_refs.is_empty());
     }
@@ -638,10 +629,7 @@ mod tests {
         let node_index: HashMap<String, Vec<CodeNode>> = HashMap::new();
 
         let mut nodes_by_file: HashMap<String, Vec<CodeNode>> = HashMap::new();
-        nodes_by_file.insert(
-            "src/utils.ts".to_string(),
-            vec![exported_fn, private_fn],
-        );
+        nodes_by_file.insert("src/utils.ts".to_string(), vec![exported_fn, private_fn]);
 
         let result = resolve_imports(&edges, &indexed_files, &node_index, &nodes_by_file);
 
@@ -652,7 +640,12 @@ mod tests {
 
     #[test]
     fn skips_package_imports() {
-        let edges = vec![make_import_edge("src/main.ts", "express", 1, Some("Router"))];
+        let edges = vec![make_import_edge(
+            "src/main.ts",
+            "express",
+            1,
+            Some("Router"),
+        )];
 
         let indexed_files: HashSet<String> =
             ["src/main.ts"].iter().map(|s| s.to_string()).collect();
@@ -668,12 +661,7 @@ mod tests {
     #[test]
     fn unresolved_relative_import_tracked() {
         // Import from ./missing which doesn't exist in indexed files
-        let edges = vec![make_import_edge(
-            "src/main.ts",
-            "./missing",
-            3,
-            Some("Foo"),
-        )];
+        let edges = vec![make_import_edge("src/main.ts", "./missing", 3, Some("Foo"))];
 
         let indexed_files: HashSet<String> =
             ["src/main.ts"].iter().map(|s| s.to_string()).collect();
@@ -703,7 +691,10 @@ mod tests {
 
     #[test]
     fn resolve_path_alias_at_sign() {
-        assert_eq!(resolve_path_alias("@/components/Button"), "src/components/Button");
+        assert_eq!(
+            resolve_path_alias("@/components/Button"),
+            "src/components/Button"
+        );
         assert_eq!(resolve_path_alias("@/utils/auth"), "src/utils/auth");
     }
 
@@ -729,11 +720,10 @@ mod tests {
             Some("Button"),
         )];
 
-        let indexed_files: HashSet<String> =
-            ["src/pages/Home.tsx", "src/components/Button.tsx"]
-                .iter()
-                .map(|s| s.to_string())
-                .collect();
+        let indexed_files: HashSet<String> = ["src/pages/Home.tsx", "src/components/Button.tsx"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
 
         let mut node_index: HashMap<String, Vec<CodeNode>> = HashMap::new();
         node_index
@@ -763,8 +753,10 @@ mod tests {
             Some("Missing"),
         )];
 
-        let indexed_files: HashSet<String> =
-            ["src/pages/Home.tsx"].iter().map(|s| s.to_string()).collect();
+        let indexed_files: HashSet<String> = ["src/pages/Home.tsx"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
         let node_index: HashMap<String, Vec<CodeNode>> = HashMap::new();
         let nodes_by_file: HashMap<String, Vec<CodeNode>> = HashMap::new();
 
@@ -800,17 +792,15 @@ mod tests {
             ),
         };
 
-        let indexed_files: HashSet<String> =
-            ["src/utils/index.ts", "src/utils/helpers.ts"]
-                .iter()
-                .map(|s| s.to_string())
-                .collect();
+        let indexed_files: HashSet<String> = ["src/utils/index.ts", "src/utils/helpers.ts"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
 
         let mut nodes_by_file: HashMap<String, Vec<CodeNode>> = HashMap::new();
         nodes_by_file.insert("src/utils/helpers.ts".to_string(), vec![helper]);
 
-        let barrel_edges =
-            resolve_barrel_exports(&nodes_by_file, &[reexport_edge], &indexed_files);
+        let barrel_edges = resolve_barrel_exports(&nodes_by_file, &[reexport_edge], &indexed_files);
 
         assert_eq!(barrel_edges.len(), 1);
         assert_eq!(
@@ -869,17 +859,15 @@ mod tests {
             ),
         };
 
-        let indexed_files: HashSet<String> =
-            ["src/lib/index.ts", "src/lib/impl.ts"]
-                .iter()
-                .map(|s| s.to_string())
-                .collect();
+        let indexed_files: HashSet<String> = ["src/lib/index.ts", "src/lib/impl.ts"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
 
         let mut nodes_by_file: HashMap<String, Vec<CodeNode>> = HashMap::new();
         nodes_by_file.insert("src/lib/impl.ts".to_string(), vec![foo, bar, baz]);
 
-        let barrel_edges =
-            resolve_barrel_exports(&nodes_by_file, &[reexport_edge], &indexed_files);
+        let barrel_edges = resolve_barrel_exports(&nodes_by_file, &[reexport_edge], &indexed_files);
 
         // Should only re-export foo and bar, not baz
         assert_eq!(barrel_edges.len(), 2);

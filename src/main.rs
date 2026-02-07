@@ -248,7 +248,8 @@ fn cmd_init(directory: &str, non_interactive: bool) {
         .collect::<Vec<(Language, String)>>();
 
     // Build language counts
-    let mut lang_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+    let mut lang_counts: std::collections::HashMap<String, usize> =
+        std::collections::HashMap::new();
     for (lang, _) in &file_paths {
         *lang_counts.entry(lang.to_string()).or_default() += 1;
     }
@@ -256,12 +257,8 @@ fn cmd_init(directory: &str, non_interactive: bool) {
     lang_sorted.sort_by(|a, b| b.1.cmp(&a.1));
 
     // Detect frameworks
-    let detected_frameworks =
-        codegraph::resolution::frameworks::detect_frameworks(directory);
-    let framework_names: Vec<String> = detected_frameworks
-        .iter()
-        .map(|f| f.name.clone())
-        .collect();
+    let detected_frameworks = codegraph::resolution::frameworks::detect_frameworks(directory);
+    let framework_names: Vec<String> = detected_frameworks.iter().map(|f| f.name.clone()).collect();
 
     // Step 4: Print detection results
     installer::print_project_detection(&root_str, &lang_sorted, &framework_names);
@@ -330,9 +327,7 @@ fn cmd_init(directory: &str, non_interactive: bool) {
             total_nodes: s.nodes,
             total_edges: s.edges,
         };
-        if codegraph::hooks::claude_template::generate_claude_md(directory, &proj_stats)
-            .is_ok()
-        {
+        if codegraph::hooks::claude_template::generate_claude_md(directory, &proj_stats).is_ok() {
             claude_md_generated = true;
         }
     }
@@ -559,17 +554,14 @@ fn cmd_languages(db_path: &str) {
 fn cmd_git_hooks(action: &str, directory: &str) {
     match action {
         "install" => {
-            if let Err(e) = codegraph::hooks::git_hooks::install_git_post_commit_hook(directory)
-            {
+            if let Err(e) = codegraph::hooks::git_hooks::install_git_post_commit_hook(directory) {
                 eprintln!("Error: {}", e);
                 process::exit(1);
             }
             println!("Git post-commit hook installed.");
         }
         "uninstall" => {
-            if let Err(e) =
-                codegraph::hooks::git_hooks::uninstall_git_post_commit_hook(directory)
-            {
+            if let Err(e) = codegraph::hooks::git_hooks::uninstall_git_post_commit_hook(directory) {
                 eprintln!("Error: {}", e);
                 process::exit(1);
             }
@@ -615,9 +607,7 @@ fn cmd_watch(directory: &str) {
             match event.kind {
                 EventKind::Modify(_) | EventKind::Create(_) => {
                     for path in &event.paths {
-                        if codegraph::indexer::CodeParser::is_supported(
-                            &path.to_string_lossy(),
-                        ) {
+                        if codegraph::indexer::CodeParser::is_supported(&path.to_string_lossy()) {
                             let _ = tx.send(path.clone());
                         }
                     }
@@ -646,7 +636,8 @@ fn cmd_watch(directory: &str) {
         match rx.recv() {
             Ok(first_path) => {
                 // Collect more events within a debounce window.
-                let mut changed: std::collections::HashSet<PathBuf> = std::collections::HashSet::new();
+                let mut changed: std::collections::HashSet<PathBuf> =
+                    std::collections::HashSet::new();
                 changed.insert(first_path);
 
                 while let Ok(path) = rx.recv_timeout(Duration::from_millis(200)) {
@@ -659,9 +650,7 @@ fn cmd_watch(directory: &str) {
                         Ok(Some(result)) => {
                             println!(
                                 "  Re-indexed {} ({} nodes, {} edges) in {}ms",
-                                path.strip_prefix(&root)
-                                    .unwrap_or(path)
-                                    .display(),
+                                path.strip_prefix(&root).unwrap_or(path).display(),
                                 result.nodes_created,
                                 result.edges_created,
                                 result.duration_ms,

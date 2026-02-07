@@ -87,10 +87,7 @@ pub fn print_summary(
         );
     }
     if hooks {
-        println!(
-            "  {} Installed 4 Claude Code hooks",
-            style("✓").green()
-        );
+        println!("  {} Installed 4 Claude Code hooks", style("✓").green());
     }
     if mcp {
         println!("  {} Registered MCP server", style("✓").green());
@@ -99,10 +96,7 @@ pub fn print_summary(
         println!("  {} Generated CLAUDE.md", style("✓").green());
     }
     if git_hook {
-        println!(
-            "  {} Installed git post-commit hook",
-            style("✓").green()
-        );
+        println!("  {} Installed git post-commit hook", style("✓").green());
     }
     println!();
     println!(
@@ -113,11 +107,7 @@ pub fn print_summary(
 }
 
 /// Detect project info and print it.
-pub fn print_project_detection(
-    dir: &str,
-    languages: &[(String, usize)],
-    frameworks: &[String],
-) {
+pub fn print_project_detection(dir: &str, languages: &[(String, usize)], frameworks: &[String]) {
     println!("  {} {}", style("Project:").bold(), dir);
     if !languages.is_empty() {
         let lang_str: Vec<String> = languages
@@ -125,11 +115,7 @@ pub fn print_project_detection(
             .take(5)
             .map(|(l, c)| format!("{} ({})", l, c))
             .collect();
-        println!(
-            "  {} {}",
-            style("Languages:").bold(),
-            lang_str.join(", ")
-        );
+        println!("  {} {}", style("Languages:").bold(), lang_str.join(", "));
     }
     if !frameworks.is_empty() {
         println!(
