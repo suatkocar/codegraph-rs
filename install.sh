@@ -90,7 +90,6 @@ main() {
 
   info "Downloading ${archive_name}..."
   tmp_dir=$(mktemp -d)
-  trap 'rm -rf "$tmp_dir"' EXIT
 
   download "$url" "${tmp_dir}/${archive_name}" || err "Download failed. Check that version ${version} has a release for ${platform}."
 
@@ -101,6 +100,9 @@ main() {
   mkdir -p "$INSTALL_DIR"
   mv "${tmp_dir}/${BINARY}" "${INSTALL_DIR}/${BINARY}"
   chmod +x "${INSTALL_DIR}/${BINARY}"
+
+  # Clean up temp files
+  rm -rf "$tmp_dir"
 
   # Check if install dir is in PATH
   if ! echo "$PATH" | tr ':' '\n' | grep -qx "$INSTALL_DIR"; then
