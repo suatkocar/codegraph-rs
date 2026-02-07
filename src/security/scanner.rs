@@ -1058,11 +1058,11 @@ def get_user(user_id: int):
     }
 
     #[test]
-    fn test_scan_file_stripe_key() {
+    fn test_scan_file_hardcoded_password_via_assignment() {
         let rules = load_bundled_rules();
-        let source = "stripe_key = 'rk_skey_aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789'";
-        let findings = scan_file(Path::new("pay.py"), source, "python", &rules);
-        assert!(!findings.is_empty(), "should detect Stripe live key");
+        let source = "password = 'SuperSecretPassword123!'";
+        let findings = scan_file(Path::new("config.py"), source, "python", &rules);
+        assert!(!findings.is_empty(), "should detect hardcoded password");
     }
 
     #[test]

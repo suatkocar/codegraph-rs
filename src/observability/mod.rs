@@ -472,7 +472,7 @@ mod tests {
 
     // --- redact_secrets extended ---
 
-    #[test_case("api_key=rk_skey_abcdefghij1234567890", "sk_live" ; "api key with sk_live")]
+    #[test_case("api_key=rk_skey_abcdefghij1234567890", "rk_skey_abcdefghij" ; "api key with rk_skey")]
     #[test_case("apikey=mySecretApiKeyThatIsLong2024", "mySecret" ; "apikey no separator")]
     #[test_case("password=VeryLongSecurePassword123", "VeryLong" ; "password value")]
     #[test_case("passwd=LongEnoughPassword!", "LongEnough" ; "passwd variant")]

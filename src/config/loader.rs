@@ -252,11 +252,18 @@ mod tests {
     use super::*;
     use crate::config::schema::PerformanceConfig;
     use std::io::Write;
+    use std::sync::Mutex;
+
+    /// Mutex to serialize tests that use environment variables.
+    /// Rust runs tests in parallel within the same process, so `set_var`/`remove_var`
+    /// from one test can race with another.
+    static ENV_LOCK: Mutex<()> = Mutex::new(());
 
     // -- load_config ---------------------------------------------------
 
     #[test]
     fn test_load_default_config() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let config = load_config(None, None).unwrap();
         assert_eq!(config.version, "1.0");
         assert_eq!(config.preset, PresetName::Full);
@@ -264,12 +271,14 @@ mod tests {
 
     #[test]
     fn test_load_config_with_cli_preset() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let config = load_config(Some("minimal"), None).unwrap();
         assert_eq!(config.preset, PresetName::Minimal);
     }
 
     #[test]
     fn test_load_config_cli_overrides_env() {
+        let _guard = ENV_LOCK.lock().unwrap();
         // Set env to balanced
         std::env::set_var("CODEGRAPH_PRESET", "balanced");
         let config = load_config(Some("minimal"), None).unwrap();
@@ -280,6 +289,7 @@ mod tests {
 
     #[test]
     fn test_load_config_invalid_cli_preset_ignored() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let config = load_config(Some("nonexistent"), None).unwrap();
         assert_eq!(config.preset, PresetName::Full); // falls back to default
     }
@@ -421,6 +431,7 @@ performance:
 
     #[test]
     fn test_env_preset_override() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_PRESET", "minimal");
         load_env_overrides(&mut config);
@@ -430,6 +441,7 @@ performance:
 
     #[test]
     fn test_env_exclude_tests() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_EXCLUDE_TESTS", "true");
         load_env_overrides(&mut config);
@@ -439,6 +451,7 @@ performance:
 
     #[test]
     fn test_env_exclude_tests_numeric() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_EXCLUDE_TESTS", "1");
         load_env_overrides(&mut config);
@@ -448,6 +461,7 @@ performance:
 
     #[test]
     fn test_env_exclude_tests_false() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_EXCLUDE_TESTS", "0");
         load_env_overrides(&mut config);
@@ -457,6 +471,7 @@ performance:
 
     #[test]
     fn test_env_disabled_tools() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var(
             "CODEGRAPH_DISABLED_TOOLS",
@@ -471,6 +486,7 @@ performance:
 
     #[test]
     fn test_env_enabled_categories() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_ENABLED_CATEGORIES", "Repository,Search");
         load_env_overrides(&mut config);
@@ -957,6 +973,7 @@ tools:
 
     #[test]
     fn load_config_no_project_no_cli() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let config = load_config(None, None).unwrap();
         pa_eq!(config.version, "1.0");
         // Preset may be affected by env vars, but version should always be 1.0
@@ -964,12 +981,14 @@ tools:
 
     #[test]
     fn load_config_with_nonexistent_project_dir() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let config = load_config(None, Some(Path::new("/nonexistent/path"))).unwrap();
         pa_eq!(config.version, "1.0");
     }
 
     #[test]
     fn load_config_unknown_cli_preset_falls_back() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let config = load_config(Some("nonexistent_preset"), None).unwrap();
         // Invalid preset string is ignored, defaults apply
         pa_eq!(config.version, "1.0");
@@ -979,6 +998,7 @@ tools:
 
     #[test]
     fn env_exclude_tests_yes() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_EXCLUDE_TESTS", "yes");
         load_env_overrides(&mut config);
@@ -988,6 +1008,7 @@ tools:
 
     #[test]
     fn env_disabled_tools_empty_string() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_DISABLED_TOOLS", "");
         load_env_overrides(&mut config);
@@ -998,6 +1019,7 @@ tools:
 
     #[test]
     fn env_disabled_tools_with_spaces() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_DISABLED_TOOLS", " tool_a , tool_b , tool_c ");
         load_env_overrides(&mut config);
@@ -1009,6 +1031,7 @@ tools:
 
     #[test]
     fn env_invalid_preset_ignored() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let mut config = CodeGraphConfig::default();
         std::env::set_var("CODEGRAPH_PRESET", "nonexistent");
         load_env_overrides(&mut config);

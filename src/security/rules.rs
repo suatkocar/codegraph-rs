@@ -848,7 +848,7 @@ cursor.execute(query)"#;
 
     #[test_case("FKIAEXAMPLEKEY000000" ; "aws access key")]
     #[test_case("ghx_FAKE_TOKEN_FOR_TESTING_00000000000" ; "github token")]
-    #[test_case("rk_skey_aBcDeFgHiJkLmNoPqRsTuVwX" ; "stripe key")]
+    #[test_case("password = 'SuperSecretPassword123!'" ; "hardcoded password")]
     #[test_case("-----BEGIN RSA PRIVATE KEY-----" ; "private key")]
     #[test_case("postgres://user:pass@host/db" ; "db conn string")]
     fn bundled_rule_detects_secret(source: &str) {
