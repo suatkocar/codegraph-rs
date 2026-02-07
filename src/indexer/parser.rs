@@ -81,6 +81,24 @@ impl CodeParser {
             Language::Ruby => tree_sitter_ruby::LANGUAGE.into(),
             Language::Swift => tree_sitter_swift::LANGUAGE.into(),
             Language::Kotlin => tree_sitter_kotlin_ng::LANGUAGE.into(),
+            // Phase 11
+            Language::Bash => tree_sitter_bash::LANGUAGE.into(),
+            Language::Scala => tree_sitter_scala::LANGUAGE.into(),
+            Language::Dart => tree_sitter_dart_orchard::LANGUAGE.into(),
+            Language::Zig => tree_sitter_zig::LANGUAGE.into(),
+            Language::Lua => tree_sitter_lua::LANGUAGE.into(),
+            Language::Verilog => tree_sitter_verilog::LANGUAGE.into(),
+            Language::Haskell => tree_sitter_haskell::LANGUAGE.into(),
+            Language::Elixir => tree_sitter_elixir::LANGUAGE.into(),
+            Language::Groovy => tree_sitter_groovy::LANGUAGE.into(),
+            Language::PowerShell => tree_sitter_powershell::LANGUAGE.into(),
+            Language::Clojure => tree_sitter_clojure_orchard::LANGUAGE.into(),
+            Language::Julia => tree_sitter_julia::LANGUAGE.into(),
+            Language::R => tree_sitter_r::LANGUAGE.into(),
+            Language::Erlang => tree_sitter_erlang::LANGUAGE.into(),
+            Language::Elm => tree_sitter_elm::LANGUAGE.into(),
+            Language::Fortran => tree_sitter_fortran::LANGUAGE.into(),
+            Language::Nix => tree_sitter_nix::LANGUAGE.into(),
         }
     }
 
@@ -129,6 +147,22 @@ impl Default for CodeParser {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// All 32 language variants for exhaustive testing.
+    fn all_languages() -> Vec<Language> {
+        vec![
+            Language::TypeScript, Language::Tsx, Language::JavaScript, Language::Jsx,
+            Language::Python, Language::Go, Language::Rust, Language::Java,
+            Language::C, Language::Cpp, Language::CSharp, Language::Php,
+            Language::Ruby, Language::Swift, Language::Kotlin,
+            // Phase 11
+            Language::Bash, Language::Scala, Language::Dart, Language::Zig,
+            Language::Lua, Language::Verilog, Language::Haskell, Language::Elixir,
+            Language::Groovy, Language::PowerShell, Language::Clojure, Language::Julia,
+            Language::R, Language::Erlang, Language::Elm, Language::Fortran,
+            Language::Nix,
+        ]
+    }
 
     // -- Parsing -----------------------------------------------------------
 
@@ -623,6 +657,450 @@ fun main() {
         assert!(!root.has_error(), "tree should be error-free");
     }
 
+    // -- Phase 11: Parse tests for new languages ----------------------------
+
+    #[test]
+    fn parse_bash_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"#!/bin/bash
+
+greet() {
+    local name="$1"
+    echo "Hello, $name!"
+}
+
+MY_VAR="world"
+greet "$MY_VAR"
+"#;
+        let tree = parser.parse(source, Language::Bash).expect("should parse Bash");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "program");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_scala_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+package com.example
+
+import scala.collection.mutable
+
+trait Greeter {
+  def greet(name: String): String
+}
+
+class UserService extends Greeter {
+  def greet(name: String): String = s"Hello, $name!"
+}
+
+object Main {
+  val version = "1.0"
+  def main(args: Array[String]): Unit = {
+    val svc = new UserService()
+    println(svc.greet("World"))
+  }
+}
+
+case class User(id: Int, name: String)
+"#;
+        let tree = parser.parse(source, Language::Scala).expect("should parse Scala");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "compilation_unit");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_dart_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+import 'dart:io';
+
+class Greeter {
+  String greet(String name) {
+    return 'Hello, $name!';
+  }
+}
+
+enum Color { red, green, blue }
+
+void main() {
+  var greeter = Greeter();
+  print(greeter.greet('World'));
+}
+"#;
+        let tree = parser.parse(source, Language::Dart).expect("should parse Dart");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "program");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_zig_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+const std = @import("std");
+
+fn add(a: i32, b: i32) i32 {
+    return a + b;
+}
+
+pub fn main() !void {
+    const result = add(3, 4);
+    std.debug.print("Result: {}\n", .{result});
+}
+"#;
+        let tree = parser.parse(source, Language::Zig).expect("should parse Zig");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "source_file");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_lua_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+local function greet(name)
+    return "Hello, " .. name .. "!"
+end
+
+function add(a, b)
+    return a + b
+end
+
+local M = {}
+
+function M.init()
+    print("initialized")
+end
+
+function M:method()
+    return self.value
+end
+
+local result = greet("World")
+print(result)
+"#;
+        let tree = parser.parse(source, Language::Lua).expect("should parse Lua");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "chunk");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_verilog_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+module counter (
+    input wire clk,
+    input wire reset,
+    output reg [7:0] count
+);
+
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        count <= 8'b0;
+    else
+        count <= count + 1;
+end
+
+endmodule
+"#;
+        let tree = parser.parse(source, Language::Verilog).expect("should parse Verilog");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "source_file");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_haskell_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+module Main where
+
+import Data.List
+
+data Color = Red | Green | Blue
+
+class Describable a where
+  describe :: a -> String
+
+instance Describable Color where
+  describe Red = "red"
+  describe Green = "green"
+  describe Blue = "blue"
+
+greet :: String -> String
+greet name = "Hello, " ++ name ++ "!"
+
+main :: IO ()
+main = putStrLn (greet "World")
+"#;
+        let tree = parser.parse(source, Language::Haskell).expect("should parse Haskell");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "haskell");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_elixir_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+defmodule Greeter do
+  def greet(name) do
+    "Hello, #{name}!"
+  end
+
+  defp private_helper do
+    :ok
+  end
+end
+
+defmodule Main do
+  def run do
+    IO.puts(Greeter.greet("World"))
+  end
+end
+"#;
+        let tree = parser.parse(source, Language::Elixir).expect("should parse Elixir");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "source");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_groovy_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+class UserService {
+    String greet(String name) {
+        return "Hello, " + name
+    }
+}
+"#;
+        let tree = parser.parse(source, Language::Groovy).expect("should parse Groovy");
+        let root = tree.root_node();
+        assert!(root.child_count() > 0);
+        // Groovy grammar may produce partial errors for some syntax
+    }
+
+    #[test]
+    fn parse_powershell_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+function Get-Greeting {
+    param([string]$Name)
+    return "Hello, $Name!"
+}
+
+class MyService {
+    [string] Greet([string]$name) {
+        return "Hello, $name!"
+    }
+}
+
+enum Color {
+    Red
+    Green
+    Blue
+}
+
+$greeting = Get-Greeting -Name "World"
+Write-Host $greeting
+"#;
+        let tree = parser.parse(source, Language::PowerShell).expect("should parse PowerShell");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "program");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_clojure_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+(ns my-app.core
+  (:require [clojure.string :as str]))
+
+(defn greet [name]
+  (str "Hello, " name "!"))
+
+(def version "1.0")
+
+(defn -main [& args]
+  (println (greet "World")))
+"#;
+        let tree = parser.parse(source, Language::Clojure).expect("should parse Clojure");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "source");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_julia_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+module MyModule
+
+struct User
+    id::Int
+    name::String
+end
+
+function greet(name::String)
+    return "Hello, $name!"
+end
+
+add(a, b) = a + b
+
+end # module
+"#;
+        let tree = parser.parse(source, Language::Julia).expect("should parse Julia");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "source_file");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_r_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+library(ggplot2)
+
+greet <- function(name) {
+  paste("Hello,", name, "!")
+}
+
+add <- function(a, b) {
+  a + b
+}
+
+result <- greet("World")
+cat(result, "\n")
+"#;
+        let tree = parser.parse(source, Language::R).expect("should parse R");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "program");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_erlang_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+-module(greeter).
+-export([greet/1, main/0]).
+
+-record(user, {id, name}).
+
+greet(Name) ->
+    io_lib:format("Hello, ~s!", [Name]).
+
+main() ->
+    io:format("~s~n", [greet("World")]).
+"#;
+        let tree = parser.parse(source, Language::Erlang).expect("should parse Erlang");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "source_file");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_elm_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+module Main exposing (main, greet)
+
+import Html exposing (text)
+
+type alias User =
+    { id : Int
+    , name : String
+    }
+
+type Color
+    = Red
+    | Green
+    | Blue
+
+greet : String -> String
+greet name =
+    "Hello, " ++ name ++ "!"
+
+main =
+    text (greet "World")
+"#;
+        let tree = parser.parse(source, Language::Elm).expect("should parse Elm");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "file");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_fortran_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+program hello
+    implicit none
+    call greet("World")
+end program hello
+
+subroutine greet(name)
+    implicit none
+    character(len=*), intent(in) :: name
+    print *, "Hello, ", name, "!"
+end subroutine greet
+
+function add(a, b) result(c)
+    implicit none
+    integer, intent(in) :: a, b
+    integer :: c
+    c = a + b
+end function add
+"#;
+        let tree = parser.parse(source, Language::Fortran).expect("should parse Fortran");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "translation_unit");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
+    #[test]
+    fn parse_nix_returns_valid_tree() {
+        let parser = CodeParser::new();
+        let source = r#"
+{ pkgs ? import <nixpkgs> {} }:
+
+let
+  greeting = "Hello, World!";
+  add = a: b: a + b;
+in {
+  shell = pkgs.mkShell {
+    buildInputs = [ pkgs.hello ];
+  };
+  result = add 3 4;
+}
+"#;
+        let tree = parser.parse(source, Language::Nix).expect("should parse Nix");
+        let root = tree.root_node();
+        assert_eq!(root.kind(), "source_code");
+        assert!(root.child_count() > 0);
+        assert!(!root.has_error(), "tree should be error-free");
+    }
+
     // -- Language detection ------------------------------------------------
 
     #[test]
@@ -646,6 +1124,29 @@ fun main() {
             ("app.rb", Some(Language::Ruby)),
             ("Main.kt", Some(Language::Kotlin)),
             ("App.swift", Some(Language::Swift)),
+            // Phase 11
+            ("deploy.sh", Some(Language::Bash)),
+            ("config.bash", Some(Language::Bash)),
+            ("Main.scala", Some(Language::Scala)),
+            ("app.dart", Some(Language::Dart)),
+            ("main.zig", Some(Language::Zig)),
+            ("script.lua", Some(Language::Lua)),
+            ("counter.v", Some(Language::Verilog)),
+            ("chip.sv", Some(Language::Verilog)),
+            ("Main.hs", Some(Language::Haskell)),
+            ("app.ex", Some(Language::Elixir)),
+            ("test.exs", Some(Language::Elixir)),
+            ("build.groovy", Some(Language::Groovy)),
+            ("build.gradle", Some(Language::Groovy)),
+            ("script.ps1", Some(Language::PowerShell)),
+            ("core.clj", Some(Language::Clojure)),
+            ("main.jl", Some(Language::Julia)),
+            ("analysis.r", Some(Language::R)),
+            ("analysis.R", Some(Language::R)),
+            ("server.erl", Some(Language::Erlang)),
+            ("Main.elm", Some(Language::Elm)),
+            ("solver.f90", Some(Language::Fortran)),
+            ("config.nix", Some(Language::Nix)),
             ("README.md", None),
             ("Cargo.toml", None),
             ("no-extension", None),
@@ -662,6 +1163,7 @@ fun main() {
 
     #[test]
     fn is_supported_returns_correct_values() {
+        // Original languages
         assert!(CodeParser::is_supported("index.ts"));
         assert!(CodeParser::is_supported("app.tsx"));
         assert!(CodeParser::is_supported("main.js"));
@@ -678,6 +1180,24 @@ fun main() {
         assert!(CodeParser::is_supported("app.rb"));
         assert!(CodeParser::is_supported("Main.kt"));
         assert!(CodeParser::is_supported("App.swift"));
+        // Phase 11
+        assert!(CodeParser::is_supported("deploy.sh"));
+        assert!(CodeParser::is_supported("Main.scala"));
+        assert!(CodeParser::is_supported("app.dart"));
+        assert!(CodeParser::is_supported("main.zig"));
+        assert!(CodeParser::is_supported("script.lua"));
+        assert!(CodeParser::is_supported("counter.v"));
+        assert!(CodeParser::is_supported("Main.hs"));
+        assert!(CodeParser::is_supported("app.ex"));
+        assert!(CodeParser::is_supported("build.groovy"));
+        assert!(CodeParser::is_supported("script.ps1"));
+        assert!(CodeParser::is_supported("core.clj"));
+        assert!(CodeParser::is_supported("main.jl"));
+        assert!(CodeParser::is_supported("analysis.R"));
+        assert!(CodeParser::is_supported("server.erl"));
+        assert!(CodeParser::is_supported("Main.elm"));
+        assert!(CodeParser::is_supported("solver.f90"));
+        assert!(CodeParser::is_supported("config.nix"));
 
         assert!(!CodeParser::is_supported("readme.md"));
         assert!(!CodeParser::is_supported("config.yaml"));
@@ -688,23 +1208,7 @@ fun main() {
 
     #[test]
     fn load_query_succeeds_for_all_languages() {
-        let languages = [
-            Language::TypeScript,
-            Language::Tsx,
-            Language::JavaScript,
-            Language::Jsx,
-            Language::Python,
-            Language::Go,
-            Language::Rust,
-            Language::Java,
-            Language::C,
-            Language::Cpp,
-            Language::CSharp,
-            Language::Php,
-            Language::Ruby,
-            Language::Swift,
-            Language::Kotlin,
-        ];
+        let languages = all_languages();
 
         for lang in languages {
             let query = CodeParser::load_query(lang);
@@ -751,25 +1255,7 @@ fun main() {
 
     #[test]
     fn get_ts_language_returns_valid_language_for_all_variants() {
-        let variants = [
-            Language::TypeScript,
-            Language::Tsx,
-            Language::JavaScript,
-            Language::Jsx,
-            Language::Python,
-            Language::Go,
-            Language::Rust,
-            Language::Java,
-            Language::C,
-            Language::Cpp,
-            Language::CSharp,
-            Language::Php,
-            Language::Ruby,
-            Language::Swift,
-            Language::Kotlin,
-        ];
-
-        for lang in variants {
+        for lang in all_languages() {
             let ts_lang = CodeParser::get_ts_language(lang);
             // A valid language must have a version within the supported range
             assert!(

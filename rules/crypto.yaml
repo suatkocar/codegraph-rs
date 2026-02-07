@@ -1,0 +1,155 @@
+# Cryptographic Security Rules
+# Detects common cryptographic misuse patterns
+
+name: Cryptographic Security
+version: "1.0.0"
+description: Rules for detecting cryptographic misuse and weak algorithms
+
+rules:
+  # Weak Hash Algorithms
+  - id: CRYPTO-001
+    name: MD5 Usage
+    severity: high
+    cwe: "CWE-327"
+    languages: []
+    pattern: '(?i)\bhashlib\.md5\b|\.md5\s*\(|MD5\.Create|Digest::MD5|md5\s*\('
+    message: MD5 is cryptographically broken and should not be used for security
+    fix: Use SHA-256, SHA-512, or SHA-3 for hashing
+    category: crypto
+
+  - id: CRYPTO-002
+    name: SHA1 Usage
+    severity: high
+    cwe: "CWE-327"
+    languages: []
+    pattern: '(?i)\bhashlib\.sha1\b|\.sha1\s*\(|SHA1\.Create|Digest::SHA1|sha1\s*\('
+    message: SHA-1 is deprecated for security use due to collision attacks
+    fix: Use SHA-256 or SHA-512
+    category: crypto
+
+  - id: CRYPTO-003
+    name: DES Encryption
+    severity: critical
+    cwe: "CWE-327"
+    languages: []
+    pattern: '(?i)\bDES\b[^A-Z]|DESede|TripleDES|3DES'
+    message: DES/3DES are deprecated; key size is insufficient
+    fix: Use AES-256-GCM or ChaCha20-Poly1305
+    category: crypto
+
+  - id: CRYPTO-004
+    name: RC4 Stream Cipher
+    severity: critical
+    cwe: "CWE-327"
+    languages: []
+    pattern: '(?i)\bRC4\b|ARC4|ARCFOUR'
+    message: RC4 has known biases and is considered broken
+    fix: Use AES-256-GCM or ChaCha20-Poly1305
+    category: crypto
+
+  # Insecure Random
+  - id: CRYPTO-005
+    name: Insecure Random Number Generator
+    severity: high
+    cwe: "CWE-330"
+    languages: ["python"]
+    pattern: 'random\.(?:random|randint|choice|uniform|sample)\s*\('
+    message: Python random module is not cryptographically secure
+    fix: Use secrets module for security-sensitive random values
+    category: crypto
+
+  - id: CRYPTO-006
+    name: Insecure Math.random
+    severity: high
+    cwe: "CWE-330"
+    languages: ["javascript", "typescript"]
+    pattern: 'Math\.random\s*\('
+    message: Math.random() is not cryptographically secure
+    fix: Use crypto.randomBytes() or crypto.getRandomValues()
+    category: crypto
+
+  - id: CRYPTO-007
+    name: Insecure rand() in C
+    severity: high
+    cwe: "CWE-330"
+    languages: ["c", "cpp"]
+    pattern: '\brand\s*\(\s*\)|srand\s*\('
+    message: "rand()/srand() are not cryptographically secure"
+    fix: Use /dev/urandom, getrandom(), or a CSPRNG library
+    category: crypto
+
+  - id: CRYPTO-008
+    name: Insecure java.util.Random
+    severity: high
+    cwe: "CWE-330"
+    languages: ["java", "kotlin"]
+    pattern: 'new\s+Random\s*\('
+    message: java.util.Random is not cryptographically secure
+    fix: Use java.security.SecureRandom
+    category: crypto
+
+  # ECB Mode
+  - id: CRYPTO-009
+    name: ECB Mode Encryption
+    severity: high
+    cwe: "CWE-327"
+    languages: []
+    pattern: '(?i)(?:AES|DES|Blowfish).*ECB|MODE_ECB|ECB_MODE|"ECB"'
+    message: ECB mode does not provide semantic security (identical blocks produce identical ciphertext)
+    fix: Use GCM, CBC with HMAC, or CTR mode
+    category: crypto
+
+  # Hardcoded Keys
+  - id: CRYPTO-010
+    name: Hardcoded Encryption Key
+    severity: critical
+    cwe: "CWE-321"
+    languages: []
+    pattern: '(?i)(?:encryption|aes|secret)_?key\s*=\s*[''"][a-zA-Z0-9+/=]{16,}[''"]'
+    message: Encryption key is hardcoded in source code
+    fix: Load keys from environment variables or a key management service
+    category: secrets
+
+  # Weak Key Derivation
+  - id: CRYPTO-011
+    name: Weak Password Hashing
+    severity: high
+    cwe: "CWE-916"
+    languages: ["python", "javascript", "java"]
+    pattern: '(?i)(?:hashlib\.(?:md5|sha1)|crypto\.createHash\s*\(\s*[''"](?:md5|sha1)|MessageDigest\.getInstance\s*\(\s*[''"](?:MD5|SHA-1))[^)]*\.(?:encode|update)'
+    message: Using weak hash for password/key derivation
+    fix: Use bcrypt, scrypt, Argon2, or PBKDF2 with SHA-256
+    category: crypto
+
+  # Hardcoded IV/Salt
+  - id: CRYPTO-012
+    name: Hardcoded IV or Salt
+    severity: high
+    cwe: "CWE-329"
+    languages: []
+    pattern: '(?i)(?:iv|salt|nonce|initialization_vector)\s*=\s*[''"][0-9a-fA-F]+[''"]'
+    message: Initialization vector or salt is hardcoded
+    fix: Generate a unique random IV/salt for each encryption operation
+    category: crypto
+
+  # Insufficient Key Size
+  - id: CRYPTO-013
+    name: Small RSA Key
+    severity: high
+    cwe: "CWE-326"
+    languages: []
+    pattern: '(?i)(?:key_?size|bits)\s*=\s*(?:512|768|1024)\b'
+    message: RSA key size is too small (less than 2048 bits)
+    fix: Use at least 2048-bit RSA keys (4096 recommended)
+    category: crypto
+
+  # Padding Oracle
+  - id: CRYPTO-014
+    name: CBC Without HMAC
+    severity: medium
+    cwe: "CWE-649"
+    languages: []
+    pattern: '(?i)(?:AES|Cipher).*(?:CBC_MODE|MODE_CBC|"CBC"|CBC_PKCS)'
+    message: CBC mode without authentication may be vulnerable to padding oracle attacks
+    fix: Use authenticated encryption (AES-GCM) or add HMAC verification
+    category: crypto

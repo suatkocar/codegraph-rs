@@ -24,7 +24,7 @@ rusqlite = { version = "0.32", features = ["bundled"] }
 sqlite-vec = "0.1"
 zerocopy = { version = "0.8", features = ["derive"] }
 
-# Tree-sitter (native — no WASM)
+# Tree-sitter (native — no WASM, 32 languages: 15 original + 17 Phase 11)
 tree-sitter = "0.25"
 tree-sitter-typescript = "0.23"
 tree-sitter-javascript = "0.23"
@@ -39,6 +39,25 @@ tree-sitter-php = "0.23"
 tree-sitter-ruby = "0.23"
 tree-sitter-kotlin-ng = "1"
 tree-sitter-swift = "0.7"
+# New languages (Phase 11) — 17 grammars, all verified tree-sitter 0.25 compatible
+tree-sitter-bash = "0.23"
+tree-sitter-scala = "0.23"
+tree-sitter-haskell = "0.23"
+tree-sitter-julia = "0.23"
+tree-sitter-lua = "0.2"
+tree-sitter-elixir = "0.3"
+tree-sitter-clojure-orchard = "0.2"
+tree-sitter-dart-orchard = "0.3"
+tree-sitter-fortran = "0.5"
+tree-sitter-groovy = "0.1"
+tree-sitter-zig = "1.1"
+tree-sitter-r = "1.2"
+tree-sitter-verilog = "1.0"
+tree-sitter-erlang = "0.14"
+tree-sitter-elm = "5.9"
+tree-sitter-powershell = "0.25"
+tree-sitter-nix = "0.3"
+# NOTE: tree-sitter-perl requires tree-sitter 0.26, skipped until upgrade
 
 # Embeddings (feature-gated)
 fastembed = { version = "4", optional = true }
@@ -61,12 +80,22 @@ notify-debouncer-full = "0.5"
 # Parallelism
 rayon = "1"
 
+# Security rules & config
+serde_yaml = "0.9"
+regex = "1"
+directories = "5"
+
+# Structured logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
 # Utilities
 sha2 = "0.10"
 hex = "0.4"
 walkdir = "2"
 ignore = "0.4"
 streaming-iterator = "0.1.9"
+chrono = "0.4"
 
 [features]
 default = ["embedding"]
@@ -81,6 +110,9 @@ codegen-units = 1
 [dev-dependencies]
 tempfile = "3"
 criterion = { version = "0.5", features = ["html_reports"] }
+proptest = "1.4"
+test-case = "3.3"
+pretty_assertions = "1.4"
 
 [[bench]]
 name = "indexing_bench"

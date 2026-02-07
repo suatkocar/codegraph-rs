@@ -1,0 +1,261 @@
+# CWE Top 25 Most Dangerous Software Weaknesses
+# https://cwe.mitre.org/top25/
+
+name: CWE Top 25
+version: "1.0.0"
+description: Rules covering the CWE Top 25 most dangerous software weaknesses
+
+rules:
+  # CWE-787 Out-of-bounds Write
+  - id: CWE-787-001
+    name: Buffer Overflow - gets
+    severity: critical
+    cwe: "CWE-787"
+    languages: ["c", "cpp"]
+    pattern: '\bgets\s*\('
+    message: "gets() has no bounds checking and can cause buffer overflow"
+    fix: Use fgets() with explicit buffer size instead
+    category: injection
+
+  - id: CWE-787-002
+    name: Buffer Overflow - strcpy
+    severity: high
+    cwe: "CWE-787"
+    languages: ["c", "cpp"]
+    pattern: '\bstrcpy\s*\('
+    message: "strcpy() has no bounds checking"
+    fix: Use strncpy() or strlcpy() with explicit size limit
+    category: injection
+
+  - id: CWE-787-003
+    name: Buffer Overflow - sprintf
+    severity: high
+    cwe: "CWE-787"
+    languages: ["c", "cpp"]
+    pattern: '\bsprintf\s*\('
+    message: "sprintf() can overflow the destination buffer"
+    fix: Use snprintf() with explicit buffer size
+    category: injection
+
+  # CWE-79 XSS
+  - id: CWE-79-001
+    name: XSS via v-html
+    severity: high
+    cwe: "CWE-79"
+    languages: ["javascript", "typescript"]
+    pattern: 'v-html\s*='
+    message: Vue v-html directive can cause XSS
+    fix: Use v-text or sanitize content before using v-html
+    category: xss
+
+  - id: CWE-79-002
+    name: XSS via template literal innerHTML
+    severity: high
+    cwe: "CWE-79"
+    languages: ["javascript", "typescript"]
+    pattern: '\.innerHTML\s*=\s*`'
+    message: Setting innerHTML with template literal can cause XSS
+    fix: Sanitize interpolated values before inserting into DOM
+    category: xss
+
+  # CWE-89 SQL Injection
+  - id: CWE-89-001
+    name: SQL Injection - f-string
+    severity: critical
+    cwe: "CWE-89"
+    languages: ["python"]
+    pattern: '\.execute\s*\(\s*f[''"].*(?:SELECT|INSERT|UPDATE|DELETE)'
+    message: SQL query built with f-string is vulnerable to injection
+    fix: Use parameterized queries with %s or ? placeholders
+    category: injection
+
+  - id: CWE-89-002
+    name: SQL Injection - string format
+    severity: critical
+    cwe: "CWE-89"
+    languages: ["python"]
+    pattern: '\.execute\s*\([^)]*\.format\s*\('
+    message: SQL query built with .format() is vulnerable to injection
+    fix: Use parameterized queries instead of string formatting
+    category: injection
+
+  - id: CWE-89-003
+    name: SQL Injection - Java concat
+    severity: critical
+    cwe: "CWE-89"
+    languages: ["java", "kotlin"]
+    pattern: '(?:executeQuery|executeUpdate|prepareStatement)\s*\([^)]*\+'
+    message: SQL query built with string concatenation
+    fix: Use PreparedStatement with parameter binding
+    category: injection
+
+  - id: CWE-89-004
+    name: SQL Injection - PHP
+    severity: critical
+    cwe: "CWE-89"
+    languages: ["php"]
+    pattern: '(?:mysql_query|mysqli_query|->query)\s*\([^)]*\.\s*\$'
+    message: SQL query with PHP variable concatenation
+    fix: Use prepared statements with PDO or mysqli
+    category: injection
+
+  - id: CWE-89-005
+    name: SQL Injection - Go
+    severity: critical
+    cwe: "CWE-89"
+    languages: ["go"]
+    pattern: '(?:db\.Query|db\.Exec|db\.QueryRow)\s*\(\s*[^,)]*\+'
+    message: SQL query with Go string concatenation
+    fix: Use parameterized queries with $1 or ? placeholders
+    category: injection
+
+  # CWE-20 Input Validation
+  - id: CWE-20-001
+    name: Missing Input Validation
+    severity: medium
+    cwe: "CWE-20"
+    languages: ["python", "javascript"]
+    pattern: '(?:int|float|Integer\.parseInt|Number)\s*\(\s*(?:request|req)\.'
+    message: User input converted without validation
+    fix: Validate and sanitize input before type conversion
+    category: injection
+
+  # CWE-125 Out-of-bounds Read
+  - id: CWE-125-001
+    name: Unchecked Array Index
+    severity: medium
+    cwe: "CWE-125"
+    languages: ["c", "cpp"]
+    pattern: '\w+\s*\[\s*(?:argc|argv|user|input|param)'
+    message: Array indexed with potentially unvalidated value
+    fix: Validate array index is within bounds before access
+    category: injection
+
+  # CWE-78 Command Injection
+  - id: CWE-78-001
+    name: Command Injection - child_process
+    severity: critical
+    cwe: "CWE-78"
+    languages: ["javascript", "typescript"]
+    pattern: 'child_process\.exec(?:Sync)?\s*\([^)]*\+'
+    message: Shell command with concatenated input
+    fix: Use child_process.execFile or spawn with argument arrays
+    category: injection
+
+  - id: CWE-78-002
+    name: Command Injection - PHP
+    severity: critical
+    cwe: "CWE-78"
+    languages: ["php"]
+    pattern: '(?:exec|system|passthru|shell_exec|popen)\s*\([^)]*\$'
+    message: Shell command with PHP variable
+    fix: Use escapeshellarg() and escapeshellcmd()
+    category: injection
+
+  # CWE-22 Path Traversal
+  - id: CWE-22-001
+    name: Path Traversal - Python
+    severity: high
+    cwe: "CWE-22"
+    languages: ["python"]
+    pattern: 'os\.path\.join\s*\([^)]*(?:request|user_input|filename)'
+    message: File path constructed with user input
+    fix: Validate the resulting path starts within the expected base directory
+    category: pathtraversal
+
+  - id: CWE-22-002
+    name: Path Traversal - Node.js
+    severity: high
+    cwe: "CWE-22"
+    languages: ["javascript", "typescript"]
+    pattern: 'path\.join\s*\([^)]*(?:req\.|params|user)'
+    message: File path built from user-controlled input
+    fix: Use path.resolve and verify the result is within the allowed directory
+    category: pathtraversal
+
+  # CWE-352 CSRF
+  - id: CWE-352-001
+    name: CSRF Protection Disabled
+    severity: medium
+    cwe: "CWE-352"
+    languages: ["python"]
+    pattern: '(?:csrf_exempt|@csrf_exempt)'
+    message: CSRF protection is explicitly disabled
+    fix: Enable CSRF protection for state-changing endpoints
+    category: authentication
+
+  # CWE-434 Unrestricted Upload
+  - id: CWE-434-001
+    name: Unrestricted File Upload
+    severity: high
+    cwe: "CWE-434"
+    languages: ["python", "javascript", "php"]
+    pattern: '(?:\.save\s*\(|moveUploadedFile|multer\(\))'
+    message: File upload without apparent content type validation
+    fix: Validate file type, size, and content; use allowlists for extensions
+    category: injection
+
+  # CWE-476 NULL Pointer Dereference
+  - id: CWE-476-001
+    name: Unchecked Null Return
+    severity: medium
+    cwe: "CWE-476"
+    languages: ["java", "kotlin"]
+    pattern: '\.get\([^)]+\)\.\w+'
+    message: Method called on potentially null result without null check
+    fix: Check for null before accessing methods; use Optional or safe-call
+    category: other
+
+  # CWE-190 Integer Overflow
+  - id: CWE-190-001
+    name: Integer Overflow Risk
+    severity: medium
+    cwe: "CWE-190"
+    languages: ["c", "cpp"]
+    pattern: '(?:atoi|atol|strtol)\s*\('
+    message: Integer conversion without overflow check
+    fix: Validate range after conversion; check errno
+    category: other
+
+  # CWE-502 Deserialization
+  - id: CWE-502-001
+    name: Java ObjectInputStream
+    severity: critical
+    cwe: "CWE-502"
+    languages: ["java"]
+    pattern: 'ObjectInputStream\s*\('
+    message: Java deserialization can lead to remote code execution
+    fix: Use JSON or XML; apply deserialization filters
+    category: deserialization
+
+  - id: CWE-502-002
+    name: Ruby Marshal.load
+    severity: high
+    cwe: "CWE-502"
+    languages: ["ruby"]
+    pattern: 'Marshal\.load\s*\('
+    message: Ruby Marshal.load with untrusted data is unsafe
+    fix: Use JSON.parse for untrusted data
+    category: deserialization
+
+  # CWE-862 Missing Authorization
+  - id: CWE-862-001
+    name: Missing Auth on Destructive Route
+    severity: high
+    cwe: "CWE-862"
+    languages: ["python"]
+    pattern: '@app\.route\([^)]+(?:PUT|DELETE|PATCH)'
+    message: Destructive endpoint may be missing authorization
+    fix: Add @login_required or equivalent auth decorator
+    category: authentication
+
+  # CWE-306 Missing Auth for Critical Function
+  - id: CWE-306-001
+    name: Admin Endpoint Without Auth Check
+    severity: high
+    cwe: "CWE-306"
+    languages: ["python", "javascript"]
+    pattern: '(?:admin|delete|destroy|remove|drop).*(?:route|router|app\.)'
+    message: Administrative endpoint may lack authentication
+    fix: Add authentication and authorization middleware
+    category: authentication

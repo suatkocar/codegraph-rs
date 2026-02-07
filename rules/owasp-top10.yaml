@@ -1,0 +1,269 @@
+# OWASP Top 10 2021 Security Rules
+# https://owasp.org/Top10/
+
+name: OWASP Top 10 2021
+version: "1.0.0"
+description: Security rules covering OWASP Top 10 2021 vulnerabilities
+
+rules:
+  # A01:2021 - Broken Access Control
+  - id: OWASP-A01-001
+    name: Direct Object Reference
+    severity: high
+    cwe: "CWE-639"
+    owasp: "A01:2021"
+    languages: ["python"]
+    pattern: 'User\.objects\.get\(id\s*=\s*request\.'
+    message: Direct object reference without ownership check
+    fix: Verify the current user has permission to access the requested resource
+    category: authentication
+
+  - id: OWASP-A01-002
+    name: Open Redirect
+    severity: medium
+    cwe: "CWE-601"
+    owasp: "A01:2021"
+    languages: ["python", "javascript"]
+    pattern: 'redirect\([^)]*request\.|redirect\([^)]*req\.'
+    message: Potential open redirect using user-controlled URL
+    fix: Validate redirect URLs against an allowlist of trusted domains
+    category: authentication
+
+  - id: OWASP-A01-003
+    name: Path Traversal via User Input
+    severity: high
+    cwe: "CWE-22"
+    owasp: "A01:2021"
+    languages: ["python", "javascript", "php"]
+    pattern: '(?:open|readFile|file_get_contents)\s*\([^)]*(?:request|req\.|params|\$_GET|\$_POST)'
+    message: File operation with user-controlled path may allow path traversal
+    fix: Validate and sanitize file paths; use allowlists and canonicalize before access
+    category: pathtraversal
+
+  # A02:2021 - Cryptographic Failures
+  - id: OWASP-A02-001
+    name: Weak Hash Algorithm
+    severity: high
+    cwe: "CWE-327"
+    owasp: "A02:2021"
+    languages: []
+    pattern: '(?i)(?:hashlib\.md5|hashlib\.sha1|MessageDigest\.getInstance\s*\(\s*[''"](?:MD5|SHA-1)[''"])'
+    message: Use of weak hash algorithm (MD5/SHA1)
+    fix: Use SHA-256, SHA-512, or SHA-3 for hashing; Argon2/bcrypt for passwords
+    category: crypto
+
+  - id: OWASP-A02-002
+    name: Insecure HTTP
+    severity: medium
+    cwe: "CWE-319"
+    owasp: "A02:2021"
+    languages: []
+    pattern: 'http://[a-zA-Z][a-zA-Z0-9._-]+'
+    message: Insecure HTTP URL detected (should use HTTPS)
+    fix: Use HTTPS for all external communications
+    category: crypto
+
+  - id: OWASP-A02-003
+    name: TLS Verification Disabled
+    severity: high
+    cwe: "CWE-295"
+    owasp: "A02:2021"
+    languages: ["python", "javascript"]
+    pattern: '(?:verify\s*=\s*False|rejectUnauthorized\s*:\s*false|NODE_TLS_REJECT_UNAUTHORIZED)'
+    message: TLS certificate verification is disabled
+    fix: Always enable TLS certificate verification in production
+    category: crypto
+
+  # A03:2021 - Injection
+  - id: OWASP-A03-001
+    name: SQL Injection via String Concatenation
+    severity: critical
+    cwe: "CWE-89"
+    owasp: "A03:2021"
+    languages: ["python", "javascript", "java", "php", "go", "ruby"]
+    pattern: '(?:SELECT|INSERT|UPDATE|DELETE|DROP)\s+.*(?:\+\s*\w|\bformat\b|\bf[''"]|%\s|\.format\(|\$\{)'
+    message: Potential SQL injection via string concatenation or interpolation
+    fix: Use parameterized queries or prepared statements
+    category: injection
+
+  - id: OWASP-A03-002
+    name: SQL Injection via execute
+    severity: critical
+    cwe: "CWE-89"
+    owasp: "A03:2021"
+    languages: ["python"]
+    pattern: '(?:cursor|conn|db)\.execute\s*\(\s*[''"](?:SELECT|INSERT|UPDATE|DELETE).*\+'
+    message: SQL query built with string concatenation passed to execute()
+    fix: Use parameterized queries with placeholders
+    category: injection
+
+  - id: OWASP-A03-003
+    name: Command Injection - shell=True
+    severity: critical
+    cwe: "CWE-78"
+    owasp: "A03:2021"
+    languages: ["python"]
+    pattern: 'subprocess\.(?:call|run|Popen)\s*\([^)]*shell\s*=\s*True'
+    message: subprocess with shell=True is vulnerable to command injection
+    fix: Use subprocess with a list of arguments and shell=False
+    category: injection
+
+  - id: OWASP-A03-004
+    name: Command Injection - os.system
+    severity: critical
+    cwe: "CWE-78"
+    owasp: "A03:2021"
+    languages: ["python"]
+    pattern: 'os\.system\s*\('
+    message: os.system is vulnerable to command injection
+    fix: Use subprocess.run with a list of arguments instead
+    category: injection
+
+  - id: OWASP-A03-005
+    name: Cross-Site Scripting - innerHTML
+    severity: high
+    cwe: "CWE-79"
+    owasp: "A03:2021"
+    languages: ["javascript", "typescript"]
+    pattern: '\.innerHTML\s*='
+    message: Setting innerHTML with user data can lead to XSS
+    fix: Use textContent or sanitize with DOMPurify before setting innerHTML
+    category: xss
+
+  - id: OWASP-A03-006
+    name: Cross-Site Scripting - document.write
+    severity: high
+    cwe: "CWE-79"
+    owasp: "A03:2021"
+    languages: ["javascript", "typescript"]
+    pattern: 'document\.write\s*\('
+    message: document.write can lead to DOM-based XSS
+    fix: Use safe DOM manipulation methods instead of document.write
+    category: xss
+
+  - id: OWASP-A03-007
+    name: Cross-Site Scripting - dangerouslySetInnerHTML
+    severity: high
+    cwe: "CWE-79"
+    owasp: "A03:2021"
+    languages: ["javascript", "typescript"]
+    pattern: 'dangerouslySetInnerHTML'
+    message: dangerouslySetInnerHTML can lead to XSS if not sanitized
+    fix: Sanitize content with DOMPurify before passing to dangerouslySetInnerHTML
+    category: xss
+
+  - id: OWASP-A03-008
+    name: Code Injection via eval
+    severity: critical
+    cwe: "CWE-94"
+    owasp: "A03:2021"
+    languages: ["python", "javascript", "php"]
+    pattern: '(?:^|[^_a-zA-Z])eval\s*\('
+    message: eval() executes arbitrary code and is a serious security risk
+    fix: Never use eval with user input; use JSON.parse or ast.literal_eval
+    category: injection
+
+  # A04:2021 - Insecure Design
+  - id: OWASP-A04-001
+    name: Debug Mode Enabled
+    severity: medium
+    cwe: "CWE-489"
+    owasp: "A04:2021"
+    languages: ["python", "javascript"]
+    pattern: '(?:DEBUG\s*=\s*True|app\.debug\s*=\s*True|"debug"\s*:\s*true)'
+    message: Debug mode appears to be enabled
+    fix: Disable debug mode in production environments
+    category: config
+
+  # A05:2021 - Security Misconfiguration
+  - id: OWASP-A05-001
+    name: CORS Wildcard
+    severity: medium
+    cwe: "CWE-942"
+    owasp: "A05:2021"
+    languages: []
+    pattern: 'Access-Control-Allow-Origin.*\*|cors\(\s*\)|CORS_ALLOW_ALL_ORIGINS\s*=\s*True'
+    message: Overly permissive CORS configuration (wildcard origin)
+    fix: Restrict CORS to specific trusted origins
+    category: config
+
+  # A07:2021 - Identification and Authentication Failures
+  - id: OWASP-A07-001
+    name: Hardcoded Password
+    severity: critical
+    cwe: "CWE-798"
+    owasp: "A07:2021"
+    languages: []
+    pattern: '(?i)(?:password|passwd|pwd)\s*=\s*[''"][^''"]{8,}[''"]'
+    message: Hardcoded password detected in source code
+    fix: Move passwords to environment variables or a secrets manager
+    category: secrets
+
+  - id: OWASP-A07-002
+    name: Weak Password Length
+    severity: medium
+    cwe: "CWE-521"
+    owasp: "A07:2021"
+    languages: []
+    pattern: '(?i)min_?length\s*[=:]\s*[1-7]\b'
+    message: Password minimum length is too short (less than 8)
+    fix: Require at least 12 characters for passwords
+    category: authentication
+
+  # A08:2021 - Software and Data Integrity Failures
+  - id: OWASP-A08-001
+    name: Insecure Deserialization - pickle
+    severity: critical
+    cwe: "CWE-502"
+    owasp: "A08:2021"
+    languages: ["python"]
+    pattern: 'pickle\.(?:loads?|Unpickler)\s*\('
+    message: pickle deserialization can execute arbitrary code
+    fix: Use JSON or a safe serialization format; never unpickle untrusted data
+    category: deserialization
+
+  - id: OWASP-A08-002
+    name: Insecure Deserialization - yaml unsafe
+    severity: high
+    cwe: "CWE-502"
+    owasp: "A08:2021"
+    languages: ["python"]
+    pattern: 'yaml\.(?:load|unsafe_load)\s*\('
+    message: Unsafe YAML loading can execute arbitrary code
+    fix: Use yaml.safe_load() instead
+    category: deserialization
+
+  - id: OWASP-A08-003
+    name: Insecure Deserialization - PHP unserialize
+    severity: critical
+    cwe: "CWE-502"
+    owasp: "A08:2021"
+    languages: ["php"]
+    pattern: 'unserialize\s*\('
+    message: PHP unserialize can lead to object injection
+    fix: Use JSON decoding or validate input before unserializing
+    category: deserialization
+
+  # A09:2021 - Security Logging Failures
+  - id: OWASP-A09-001
+    name: Sensitive Data in Logs
+    severity: medium
+    cwe: "CWE-532"
+    owasp: "A09:2021"
+    languages: ["python", "javascript", "java"]
+    pattern: '(?i)(?:log|print|console\.log|logger)\s*\(.*(?:password|secret|token|api_key|credentials)'
+    message: Sensitive data may be written to logs
+    fix: Mask or redact sensitive fields before logging
+    category: config
+
+  # A10:2021 - SSRF
+  - id: OWASP-A10-001
+    name: SSRF via User URL
+    severity: high
+    cwe: "CWE-918"
+    owasp: "A10:2021"
+    languages: ["python", "javascript"]
+    pattern: '(?:requests\.get|fetch|urllib\.request\.urlopen|http\.get)\s*\([^)]*(?:request\.|req\.|params|user)'
+    message: HTTP request with user-controlled URL may lead to SSRF
+    fix: Validate and allowlist URLs; block private/internal IP ranges
+    category: injection

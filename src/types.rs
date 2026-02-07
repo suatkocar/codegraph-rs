@@ -10,7 +10,7 @@ use std::collections::HashMap;
 // Language
 // ---------------------------------------------------------------------------
 
-/// Supported source languages (15 languages, 18 variants counting JSX/TSX).
+/// Supported source languages (32 languages, 35 variants counting JSX/TSX).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Language {
@@ -29,6 +29,24 @@ pub enum Language {
     Ruby,
     Swift,
     Kotlin,
+    // Phase 11: 17 new languages
+    Bash,
+    Scala,
+    Dart,
+    Zig,
+    Lua,
+    Verilog,
+    Haskell,
+    Elixir,
+    Groovy,
+    PowerShell,
+    Clojure,
+    Julia,
+    R,
+    Erlang,
+    Elm,
+    Fortran,
+    Nix,
 }
 
 impl Language {
@@ -50,6 +68,24 @@ impl Language {
             ".rb" => Some(Self::Ruby),
             ".swift" => Some(Self::Swift),
             ".kt" | ".kts" => Some(Self::Kotlin),
+            // Phase 11
+            ".sh" | ".bash" | ".zsh" => Some(Self::Bash),
+            ".scala" | ".sc" => Some(Self::Scala),
+            ".dart" => Some(Self::Dart),
+            ".zig" => Some(Self::Zig),
+            ".lua" => Some(Self::Lua),
+            ".v" | ".vh" | ".sv" | ".svh" => Some(Self::Verilog),
+            ".hs" | ".lhs" => Some(Self::Haskell),
+            ".ex" | ".exs" => Some(Self::Elixir),
+            ".groovy" | ".gradle" => Some(Self::Groovy),
+            ".ps1" | ".psm1" | ".psd1" => Some(Self::PowerShell),
+            ".clj" | ".cljs" | ".cljc" | ".edn" => Some(Self::Clojure),
+            ".jl" => Some(Self::Julia),
+            ".r" | ".R" | ".Rmd" => Some(Self::R),
+            ".erl" | ".hrl" => Some(Self::Erlang),
+            ".elm" => Some(Self::Elm),
+            ".f90" | ".f95" | ".f03" | ".f08" | ".f" | ".for" | ".fpp" => Some(Self::Fortran),
+            ".nix" => Some(Self::Nix),
             _ => None,
         }
     }
@@ -71,6 +107,24 @@ impl Language {
             Self::Ruby => "ruby",
             Self::Swift => "swift",
             Self::Kotlin => "kotlin",
+            // Phase 11
+            Self::Bash => "bash",
+            Self::Scala => "scala",
+            Self::Dart => "dart",
+            Self::Zig => "zig",
+            Self::Lua => "lua",
+            Self::Verilog => "verilog",
+            Self::Haskell => "haskell",
+            Self::Elixir => "elixir",
+            Self::Groovy => "groovy",
+            Self::PowerShell => "powershell",
+            Self::Clojure => "clojure",
+            Self::Julia => "julia",
+            Self::R => "r",
+            Self::Erlang => "erlang",
+            Self::Elm => "elm",
+            Self::Fortran => "fortran",
+            Self::Nix => "nix",
         }
     }
 
@@ -90,6 +144,24 @@ impl Language {
             Self::Ruby => include_str!("../queries/ruby.scm"),
             Self::Swift => include_str!("../queries/swift.scm"),
             Self::Kotlin => include_str!("../queries/kotlin.scm"),
+            // Phase 11
+            Self::Bash => include_str!("../queries/bash.scm"),
+            Self::Scala => include_str!("../queries/scala.scm"),
+            Self::Dart => include_str!("../queries/dart.scm"),
+            Self::Zig => include_str!("../queries/zig.scm"),
+            Self::Lua => include_str!("../queries/lua.scm"),
+            Self::Verilog => include_str!("../queries/verilog.scm"),
+            Self::Haskell => include_str!("../queries/haskell.scm"),
+            Self::Elixir => include_str!("../queries/elixir.scm"),
+            Self::Groovy => include_str!("../queries/groovy.scm"),
+            Self::PowerShell => include_str!("../queries/powershell.scm"),
+            Self::Clojure => include_str!("../queries/clojure.scm"),
+            Self::Julia => include_str!("../queries/julia.scm"),
+            Self::R => include_str!("../queries/r.scm"),
+            Self::Erlang => include_str!("../queries/erlang.scm"),
+            Self::Elm => include_str!("../queries/elm.scm"),
+            Self::Fortran => include_str!("../queries/fortran.scm"),
+            Self::Nix => include_str!("../queries/nix.scm"),
         }
     }
 
@@ -111,6 +183,24 @@ impl Language {
             Self::Ruby => "ruby",
             Self::Swift => "swift",
             Self::Kotlin => "kotlin",
+            // Phase 11
+            Self::Bash => "bash",
+            Self::Scala => "scala",
+            Self::Dart => "dart",
+            Self::Zig => "zig",
+            Self::Lua => "lua",
+            Self::Verilog => "verilog",
+            Self::Haskell => "haskell",
+            Self::Elixir => "elixir",
+            Self::Groovy => "groovy",
+            Self::PowerShell => "powershell",
+            Self::Clojure => "clojure",
+            Self::Julia => "julia",
+            Self::R => "r",
+            Self::Erlang => "erlang",
+            Self::Elm => "elm",
+            Self::Fortran => "fortran",
+            Self::Nix => "nix",
         }
     }
 
@@ -132,6 +222,24 @@ impl Language {
             "ruby" => Some(Self::Ruby),
             "swift" => Some(Self::Swift),
             "kotlin" => Some(Self::Kotlin),
+            // Phase 11
+            "bash" | "shell" | "sh" => Some(Self::Bash),
+            "scala" => Some(Self::Scala),
+            "dart" => Some(Self::Dart),
+            "zig" => Some(Self::Zig),
+            "lua" => Some(Self::Lua),
+            "verilog" | "systemverilog" | "sv" => Some(Self::Verilog),
+            "haskell" | "hs" => Some(Self::Haskell),
+            "elixir" | "ex" => Some(Self::Elixir),
+            "groovy" => Some(Self::Groovy),
+            "powershell" | "ps1" => Some(Self::PowerShell),
+            "clojure" | "clj" => Some(Self::Clojure),
+            "julia" | "jl" => Some(Self::Julia),
+            "r" => Some(Self::R),
+            "erlang" | "erl" => Some(Self::Erlang),
+            "elm" => Some(Self::Elm),
+            "fortran" | "f90" => Some(Self::Fortran),
+            "nix" => Some(Self::Nix),
             _ => None,
         }
     }
@@ -369,6 +477,7 @@ mod tests {
 
     #[test]
     fn test_language_from_extension() {
+        // Original 15 languages
         assert_eq!(Language::from_extension(".ts"), Some(Language::TypeScript));
         assert_eq!(Language::from_extension(".tsx"), Some(Language::Tsx));
         assert_eq!(Language::from_extension(".js"), Some(Language::JavaScript));
@@ -389,6 +498,37 @@ mod tests {
         assert_eq!(Language::from_extension(".swift"), Some(Language::Swift));
         assert_eq!(Language::from_extension(".mjs"), Some(Language::JavaScript));
         assert_eq!(Language::from_extension(".cjs"), Some(Language::JavaScript));
+        // Phase 11: 17 new languages
+        assert_eq!(Language::from_extension(".sh"), Some(Language::Bash));
+        assert_eq!(Language::from_extension(".bash"), Some(Language::Bash));
+        assert_eq!(Language::from_extension(".zsh"), Some(Language::Bash));
+        assert_eq!(Language::from_extension(".scala"), Some(Language::Scala));
+        assert_eq!(Language::from_extension(".sc"), Some(Language::Scala));
+        assert_eq!(Language::from_extension(".dart"), Some(Language::Dart));
+        assert_eq!(Language::from_extension(".zig"), Some(Language::Zig));
+        assert_eq!(Language::from_extension(".lua"), Some(Language::Lua));
+        assert_eq!(Language::from_extension(".v"), Some(Language::Verilog));
+        assert_eq!(Language::from_extension(".sv"), Some(Language::Verilog));
+        assert_eq!(Language::from_extension(".hs"), Some(Language::Haskell));
+        assert_eq!(Language::from_extension(".lhs"), Some(Language::Haskell));
+        assert_eq!(Language::from_extension(".ex"), Some(Language::Elixir));
+        assert_eq!(Language::from_extension(".exs"), Some(Language::Elixir));
+        assert_eq!(Language::from_extension(".groovy"), Some(Language::Groovy));
+        assert_eq!(Language::from_extension(".gradle"), Some(Language::Groovy));
+        assert_eq!(Language::from_extension(".ps1"), Some(Language::PowerShell));
+        assert_eq!(Language::from_extension(".psm1"), Some(Language::PowerShell));
+        assert_eq!(Language::from_extension(".clj"), Some(Language::Clojure));
+        assert_eq!(Language::from_extension(".cljs"), Some(Language::Clojure));
+        assert_eq!(Language::from_extension(".jl"), Some(Language::Julia));
+        assert_eq!(Language::from_extension(".r"), Some(Language::R));
+        assert_eq!(Language::from_extension(".R"), Some(Language::R));
+        assert_eq!(Language::from_extension(".erl"), Some(Language::Erlang));
+        assert_eq!(Language::from_extension(".hrl"), Some(Language::Erlang));
+        assert_eq!(Language::from_extension(".elm"), Some(Language::Elm));
+        assert_eq!(Language::from_extension(".f90"), Some(Language::Fortran));
+        assert_eq!(Language::from_extension(".f95"), Some(Language::Fortran));
+        assert_eq!(Language::from_extension(".nix"), Some(Language::Nix));
+        // Unsupported
         assert_eq!(Language::from_extension(".yaml"), None);
     }
 
@@ -431,24 +571,87 @@ mod tests {
 
     #[test]
     fn test_language_query_source_not_empty() {
-        for lang in [
-            Language::TypeScript,
-            Language::Tsx,
-            Language::JavaScript,
-            Language::Jsx,
-            Language::Python,
-            Language::Go,
-            Language::Rust,
-            Language::Java,
-            Language::C,
-            Language::Cpp,
-            Language::CSharp,
-            Language::Php,
-            Language::Ruby,
-            Language::Swift,
-            Language::Kotlin,
-        ] {
+        for lang in ALL_LANGUAGES {
             assert!(!lang.query_source().is_empty(), "{} query is empty", lang);
+        }
+    }
+
+    /// All 32 language variants for exhaustive testing.
+    const ALL_LANGUAGES: [Language; 32] = [
+        Language::TypeScript,
+        Language::Tsx,
+        Language::JavaScript,
+        Language::Jsx,
+        Language::Python,
+        Language::Go,
+        Language::Rust,
+        Language::Java,
+        Language::C,
+        Language::Cpp,
+        Language::CSharp,
+        Language::Php,
+        Language::Ruby,
+        Language::Swift,
+        Language::Kotlin,
+        // Phase 11
+        Language::Bash,
+        Language::Scala,
+        Language::Dart,
+        Language::Zig,
+        Language::Lua,
+        Language::Verilog,
+        Language::Haskell,
+        Language::Elixir,
+        Language::Groovy,
+        Language::PowerShell,
+        Language::Clojure,
+        Language::Julia,
+        Language::R,
+        Language::Erlang,
+        Language::Elm,
+        Language::Fortran,
+        Language::Nix,
+    ];
+
+    #[test]
+    fn test_language_as_str_from_str_roundtrip() {
+        for lang in ALL_LANGUAGES {
+            let s = lang.as_str();
+            assert!(
+                Language::from_str_loose(s).is_some(),
+                "from_str_loose({}) returned None for {:?}",
+                s,
+                lang
+            );
+            assert_eq!(
+                Language::from_str_loose(s).unwrap(),
+                lang,
+                "roundtrip failed for {:?}",
+                lang
+            );
+        }
+    }
+
+    #[test]
+    fn test_language_from_str_loose_aliases() {
+        // Test various aliases for new languages
+        assert_eq!(Language::from_str_loose("shell"), Some(Language::Bash));
+        assert_eq!(Language::from_str_loose("sh"), Some(Language::Bash));
+        assert_eq!(Language::from_str_loose("hs"), Some(Language::Haskell));
+        assert_eq!(Language::from_str_loose("ex"), Some(Language::Elixir));
+        assert_eq!(Language::from_str_loose("clj"), Some(Language::Clojure));
+        assert_eq!(Language::from_str_loose("jl"), Some(Language::Julia));
+        assert_eq!(Language::from_str_loose("erl"), Some(Language::Erlang));
+        assert_eq!(Language::from_str_loose("ps1"), Some(Language::PowerShell));
+        assert_eq!(Language::from_str_loose("f90"), Some(Language::Fortran));
+        assert_eq!(Language::from_str_loose("systemverilog"), Some(Language::Verilog));
+        assert_eq!(Language::from_str_loose("sv"), Some(Language::Verilog));
+    }
+
+    #[test]
+    fn test_language_grammar_name_not_empty() {
+        for lang in ALL_LANGUAGES {
+            assert!(!lang.grammar_name().is_empty(), "{} grammar name is empty", lang);
         }
     }
 
