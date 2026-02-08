@@ -21,7 +21,7 @@ High-performance Rust codebase intelligence engine. Builds a semantic code graph
 
 ## Key Commands
 - `cargo build --release` — Build optimized binary
-- `cargo test` — Run all 2063 tests
+- `cargo test` — Run all 2064 tests
 - `./target/release/codegraph init <dir>` — Interactive setup (index + hooks + MCP + git hooks + CLAUDE.md)
 - `./target/release/codegraph init <dir> --yes` — Non-interactive setup (CI/scripting)
 - `./target/release/codegraph index <dir>` — Index a codebase

@@ -731,7 +731,7 @@ pub fn handle_post_tool_failure() {
                     ctx.push_str(&format!("  - {} ({}) in {}\n", r.name, r.kind, r.file_path,));
                     if let Some(ref snippet) = r.snippet {
                         let short = if snippet.len() > 80 {
-                            &snippet[..80]
+                            &snippet[..snippet.floor_char_boundary(80)]
                         } else {
                             snippet
                         };

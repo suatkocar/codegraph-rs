@@ -537,10 +537,37 @@ impl<'a> IndexingPipeline<'a> {
 // File collection (using the `ignore` crate for gitignore awareness)
 // ---------------------------------------------------------------------------
 
+/// Directories that are always skipped, regardless of `.gitignore`.
+const ALWAYS_SKIP_DIRS: &[&str] = &[
+    "node_modules",
+    ".git",
+    "vendor",
+    "third_party",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "target",
+    "build",
+    "dist",
+    ".next",
+    ".nuxt",
+    ".output",
+    ".cache",
+];
+
 /// Collect all supported source files under `root`, respecting `.gitignore`.
 fn collect_files(root: &Path) -> Vec<PathBuf> {
     let walker = WalkBuilder::new(root)
         .standard_filters(true) // respects .gitignore, .ignore, hidden files
+        .filter_entry(|entry| {
+            // Skip well-known dependency/output directories unconditionally.
+            if entry.file_type().is_some_and(|ft| ft.is_dir()) {
+                if let Some(name) = entry.file_name().to_str() {
+                    return !ALWAYS_SKIP_DIRS.contains(&name);
+                }
+            }
+            true
+        })
         .build();
 
     let mut files = Vec::new();

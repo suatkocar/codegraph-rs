@@ -131,7 +131,7 @@ fn build_node_metadata(node: &CodeNode) -> String {
     if let Some(ref body) = node.body {
         // Truncate body to 4 KB to match the TS version's behaviour.
         let truncated = if body.len() > 4096 {
-            &body[..4096]
+            &body[..body.floor_char_boundary(4096)]
         } else {
             body.as_str()
         };

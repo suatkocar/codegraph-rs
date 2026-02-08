@@ -168,7 +168,7 @@ pub fn node_to_embedding_text(node: &CodeNode) -> String {
     let body_preview = node
         .body
         .as_deref()
-        .map(|b| if b.len() > 500 { &b[..500] } else { b })
+        .map(|b| if b.len() > 500 { &b[..b.floor_char_boundary(500)] } else { b })
         .unwrap_or("");
 
     format!(

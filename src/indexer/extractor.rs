@@ -303,7 +303,8 @@ impl Extractor {
             // Body text, truncated to MAX_BODY_LEN.
             let raw_body = node_text(def_node, source_bytes);
             let body = if raw_body.len() > MAX_BODY_LEN {
-                let mut truncated = raw_body[..MAX_BODY_LEN].to_string();
+                let end = raw_body.floor_char_boundary(MAX_BODY_LEN);
+                let mut truncated = raw_body[..end].to_string();
                 truncated.push_str("...");
                 truncated
             } else {
@@ -2158,5 +2159,34 @@ public class Calculator {
             Some("Calculator.add"),
             "Java method should have qualified name ClassName.methodName"
         );
+    }
+
+    #[test]
+    fn body_truncation_does_not_panic_on_multibyte_chars() {
+        // Build a TypeScript source where a function body contains flag emojis
+        // right around the MAX_BODY_LEN (2000 byte) boundary.
+        // Each flag emoji (e.g. 🇬🇧) is 8 bytes (two regional indicators).
+        // We pad to just before 2000 then place emojis across the boundary.
+        let padding = "x".repeat(1995);
+        let source = format!(
+            "const flagMap = {{\n{}: \"🇬🇧🇺🇸🇫🇷🇩🇪🇯🇵\"\n}};",
+            padding
+        );
+        // This previously panicked with:
+        //   byte index 2000 is not a char boundary; it is inside '🇬'
+        let nodes = parse_and_extract_nodes(&source, Language::TypeScript);
+        // Should not panic. If we got here, the fix works.
+        // Also verify the body is truncated (not the full source).
+        for node in &nodes {
+            if let Some(ref body) = node.body {
+                assert!(
+                    body.is_char_boundary(body.len()),
+                    "body must end on a valid char boundary"
+                );
+                if body.len() > MAX_BODY_LEN + 10 {
+                    panic!("body should be truncated near MAX_BODY_LEN, got {}", body.len());
+                }
+            }
+        }
     }
 }

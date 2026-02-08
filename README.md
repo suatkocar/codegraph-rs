@@ -3,7 +3,7 @@
 **Codebase intelligence as an MCP server. Native Rust. Sub-second indexing. Zero runtime dependencies.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-2063%20passing-brightgreen)]()
+[![Tests](https://img.shields.io/badge/tests-2064%20passing-brightgreen)]()
 [![Languages](https://img.shields.io/badge/languages-32-blue)]()
 [![MCP Tools](https://img.shields.io/badge/MCP%20tools-44-purple)]()
 
@@ -15,7 +15,7 @@ CodeGraph builds a complete semantic graph of your codebase — every function, 
 
 When Claude Code, Codex, or any MCP-compatible agent enters your project, CodeGraph gives it an immediate, deep understanding of your entire codebase: what calls what, what depends on what, what breaks if you change something. Not file-level grep — **graph-aware, semantically-ranked, token-budgeted context**.
 
-**v0.2.1** adds git integration, security scanning (OWASP/CWE), call graph analysis, data flow analysis, a YAML configuration system, and structured logging.
+**v0.2.3** adds git integration, security scanning (OWASP/CWE), call graph analysis, data flow analysis, a YAML configuration system, structured logging, and robust multi-byte character handling.
 
 ## Install
 
@@ -360,7 +360,7 @@ cargo build --release
 # Without embeddings (keyword-only search, leaner binary)
 cargo build --release --no-default-features
 
-# Run the test suite (2063 tests)
+# Run the test suite (2064 tests)
 cargo test
 ```
 
