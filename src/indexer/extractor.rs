@@ -2168,10 +2168,7 @@ public class Calculator {
         // Each flag emoji (e.g. 🇬🇧) is 8 bytes (two regional indicators).
         // We pad to just before 2000 then place emojis across the boundary.
         let padding = "x".repeat(1995);
-        let source = format!(
-            "const flagMap = {{\n{}: \"🇬🇧🇺🇸🇫🇷🇩🇪🇯🇵\"\n}};",
-            padding
-        );
+        let source = format!("const flagMap = {{\n{}: \"🇬🇧🇺🇸🇫🇷🇩🇪🇯🇵\"\n}};", padding);
         // This previously panicked with:
         //   byte index 2000 is not a char boundary; it is inside '🇬'
         let nodes = parse_and_extract_nodes(&source, Language::TypeScript);
@@ -2184,7 +2181,10 @@ public class Calculator {
                     "body must end on a valid char boundary"
                 );
                 if body.len() > MAX_BODY_LEN + 10 {
-                    panic!("body should be truncated near MAX_BODY_LEN, got {}", body.len());
+                    panic!(
+                        "body should be truncated near MAX_BODY_LEN, got {}",
+                        body.len()
+                    );
                 }
             }
         }
