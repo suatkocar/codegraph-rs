@@ -2043,7 +2043,8 @@ impl ServerHandler for CodeGraphServer {
                  codegraph_query (semantic search), codegraph_dependencies (import tracing), \
                  codegraph_callers (call graph), codegraph_find_references (cross-file refs), \
                  codegraph_structure (project overview), codegraph_node (symbol lookup). \
-                 These use a pre-built AST index and return results in milliseconds.".into(),
+                 These use a pre-built AST index and return results in milliseconds."
+                    .into(),
             ),
             capabilities: ServerCapabilities::builder().enable_tools().build(),
             server_info: rmcp::model::Implementation {
