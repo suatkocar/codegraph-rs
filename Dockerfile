@@ -16,6 +16,7 @@ WORKDIR /build
 COPY Cargo.toml Cargo.lock ./
 COPY src/ src/
 COPY rules/ rules/
+COPY benches/ benches/
 
 # Build release binary without embeddings (not needed for security scanning,
 # avoids downloading the 90MB Jina model at runtime).
