@@ -16,6 +16,8 @@ WORKDIR /build
 COPY Cargo.toml Cargo.lock ./
 COPY src/ src/
 COPY rules/ rules/
+COPY queries/ queries/
+COPY assets/ assets/
 COPY benches/ benches/
 
 # Build release binary without embeddings (not needed for security scanning,
