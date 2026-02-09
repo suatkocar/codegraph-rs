@@ -26,7 +26,7 @@ RUN cargo build --release --no-default-features \
     && strip /build/target/release/codegraph
 
 # Stage 2: Slim runtime image
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
