@@ -5,7 +5,6 @@ target/
 *.md
 eval/
 tests/
-benches/
 docs/
 .vscode/
 .idea/
