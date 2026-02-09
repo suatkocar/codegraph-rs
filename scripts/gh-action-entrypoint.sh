@@ -70,7 +70,7 @@ wait_for_server() {
   local attempts=0
   local max_attempts=60
   while [ $attempts -lt $max_attempts ]; do
-    if curl -s -o /dev/null -w "%{http_code}" "$MCP_URL" 2>/dev/null | grep -qE "200|405|400"; then
+    if curl -s -o /dev/null -w "%{http_code}" "$MCP_URL" 2>/dev/null | grep -qE "^[2-5][0-9][0-9]$"; then
       return 0
     fi
     sleep 0.5
